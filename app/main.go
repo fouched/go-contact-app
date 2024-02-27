@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"html/template"
 	"log"
 	"net/http"
 	"time"
@@ -21,14 +20,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// close db conn pool after app stop
+	// close db conn pool after app stops
 	defer dbPool.Close()
 
-	http.HandleFunc("/", Home)
-	http.HandleFunc("/contacts", Contacts)
+	srv := &http.Server{
+		Addr:    port,
+		Handler: routes(),
+	}
 
 	fmt.Println(fmt.Sprintf("Starting application on %s", port))
-	log.Fatalln(http.ListenAndServe(port, nil))
+
+	err = srv.ListenAndServe()
+	if err != nil {
+		log.Fatalln(err)
+	}
 }
 
 func run() (*sql.DB, error) {
@@ -38,23 +43,6 @@ func run() (*sql.DB, error) {
 	}
 
 	return conn, nil
-}
-
-func Home(w http.ResponseWriter, r *http.Request) {
-	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
-}
-
-func Contacts(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "contact.page.tmpl")
-}
-
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
-	parsedTemplate, _ := template.ParseFiles("./templates/"+tmpl, "./templates/base.layout.tmpl")
-	err := parsedTemplate.Execute(w, nil)
-	if err != nil {
-		fmt.Println("Error parsing template", err)
-		return
-	}
 }
 
 func DbPool(dsn string) (*sql.DB, error) {
