@@ -1,10 +1,20 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"html/template"
 	"net/http"
+	"os"
 )
+
+// db is the db connection pool used by handlers
+var db *sql.DB
+
+// SetHandlerDb sets the db connection pool for handlers
+func SetHandlerDb(d *sql.DB) {
+	db = d
+}
 
 // Home is the home page handler
 func Home(w http.ResponseWriter, r *http.Request) {
@@ -13,6 +23,14 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 // Contacts is the contacts page handler
 func Contacts(w http.ResponseWriter, r *http.Request) {
+	//db.ExecContext()
+	var greeting string
+	err := db.QueryRow("select 'Hello, world!'").Scan(&greeting)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+	}
+
+	fmt.Println(greeting)
 	RenderTemplate(w, "contact.page.tmpl")
 }
 

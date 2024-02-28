@@ -37,15 +37,18 @@ func main() {
 }
 
 func run() (*sql.DB, error) {
-	conn, err := DbPool(dbString)
+	conn, err := DatabasePool(dbString)
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying argh...")
 	}
 
+	// set the db connection for all handlers
+	SetHandlerDb(conn)
+
 	return conn, nil
 }
 
-func DbPool(dsn string) (*sql.DB, error) {
+func DatabasePool(dsn string) (*sql.DB, error) {
 	// no error thrown even host or db does not exist
 	conn, err := sql.Open("pgx", dsn)
 	if err != nil {
