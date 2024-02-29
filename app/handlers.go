@@ -3,9 +3,9 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"github.com/fouched/go-contact-app/app/models"
 	"html/template"
 	"net/http"
-	"os"
 )
 
 // db is the db connection pool used by handlers
@@ -23,23 +23,32 @@ func Home(w http.ResponseWriter, r *http.Request) {
 
 // Contacts is the contacts page handler
 func Contacts(w http.ResponseWriter, r *http.Request) {
-	//db.ExecContext()
-	var greeting string
-	err := db.QueryRow("select 'Hello, world!'").Scan(&greeting)
+	rows, err := db.Query("SELECT * FROM contact")
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "QueryRow failed: %v\n", err)
+		fmt.Println("DB query error, 0 rows will be returned")
+	}
+	defer rows.Close()
+
+	var contacts []models.Contact
+	for rows.Next() {
+		var c models.Contact
+		err := rows.Scan(&c.ID, &c.First, &c.Last, &c.Phone, &c.Email)
+		if err != nil {
+			fmt.Println("DB query error, ignoring row")
+		}
+		contacts = append(contacts, c)
 	}
 
-	fmt.Println(greeting)
-	RenderTemplate(w, "contact.page.tmpl")
+	RenderTemplate(w, "contact.page.tmpl", contacts)
 }
 
 /*
 TODO extract below to cache template parsing in a production environment
 */
-func RenderTemplate(w http.ResponseWriter, tmpl string) {
+
+func RenderTemplate(w http.ResponseWriter, tmpl string, td any) {
 	parsedTemplate, _ := template.ParseFiles("./templates/"+tmpl, "./templates/base.layout.tmpl")
-	err := parsedTemplate.Execute(w, nil)
+	err := parsedTemplate.Execute(w, td)
 	if err != nil {
 		fmt.Println("Error parsing template", err)
 		return
