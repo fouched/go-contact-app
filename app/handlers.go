@@ -48,7 +48,6 @@ func Contacts(w http.ResponseWriter, r *http.Request) {
 /*
 TODO extract below to cache template parsing in a production environment
 */
-
 func RenderTemplate(w http.ResponseWriter, tmpl string, td any) {
 	parsedTemplate, _ := template.ParseFiles("./templates/"+tmpl, "./templates/base.layout.tmpl")
 	err := parsedTemplate.Execute(w, td)
