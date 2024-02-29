@@ -25,7 +25,7 @@ func Home(w http.ResponseWriter, r *http.Request) {
 func Contacts(w http.ResponseWriter, r *http.Request) {
 
 	//TODO the db stuff should live elsewhere - fine for now
-	// and NO there will no absolutely not usage of ORM - IMHO it is EVIL!
+	// and NO there will absolutely not usage of ORM - IMHO it is EVIL!
 	rows, err := db.Query("SELECT * FROM contact")
 	if err != nil {
 		fmt.Println("DB query error, 0 rows will be returned")
