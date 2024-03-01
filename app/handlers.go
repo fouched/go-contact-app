@@ -21,12 +21,11 @@ func Home(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
 }
 
-// Contacts is the contacts page handler
-func Contacts(w http.ResponseWriter, r *http.Request) {
+// ContactsList is the contacts page handler
+func ContactsList(w http.ResponseWriter, r *http.Request) {
 
 	//TODO the db stuff should live elsewhere - fine for now
-	// and NO there will absolutely not usage of ORM - IMHO it is EVIL!
-	rows, err := db.Query("SELECT * FROM contact")
+	rows, err := db.Query("SELECT * FROM contacts")
 	if err != nil {
 		fmt.Println("DB query error, 0 rows will be returned")
 	}
@@ -42,12 +41,44 @@ func Contacts(w http.ResponseWriter, r *http.Request) {
 		contacts = append(contacts, c)
 	}
 
-	RenderTemplate(w, "contact.page.tmpl", contacts)
+	RenderTemplate(w, "contacts.list.tmpl", contacts)
 }
 
-/*
-TODO extract below to cache template parsing in a production environment
-*/
+// ContactsAdd is the contacts view and edit page handler
+func ContactsAdd(w http.ResponseWriter, r *http.Request) {
+	RenderTemplate(w, "contacts.add.tmpl", nil)
+}
+
+// ContactsNew is the new contact page handler
+func ContactsNew(w http.ResponseWriter, r *http.Request) {
+	fe := r.ParseForm()
+	if fe != nil {
+		fmt.Println("Cannot parse form", fe)
+		return
+	}
+
+	//TODO the db stuff should live elsewhere - fine for now
+	var id int
+	stmt := `INSERT INTO contacts (first, last, phone, email)
+    			VALUES($1, $2, $3, $4) returning id`
+
+	err := db.QueryRow(stmt,
+		r.Form.Get("first"),
+		r.Form.Get("last"),
+		r.Form.Get("phone"),
+		r.Form.Get("email"),
+	).Scan(&id)
+
+	if err == nil {
+		fmt.Println(fmt.Sprintf("Inserted contact with id %d", id))
+	} else {
+		fmt.Println("DB error, cannot insert contact", fe)
+	}
+
+	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
+}
+
+// RenderTemplate TODO extract below to cache template parsing in a production environment
 func RenderTemplate(w http.ResponseWriter, tmpl string, td any) {
 	parsedTemplate, _ := template.ParseFiles("./templates/"+tmpl, "./templates/base.layout.tmpl")
 	err := parsedTemplate.Execute(w, td)

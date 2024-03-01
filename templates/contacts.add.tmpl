@@ -1,0 +1,35 @@
+{{template "base" .}}
+{{define "content"}}
+    <h2>Add Contact</h2>
+    <form action="/contacts/new" method="post">
+        <fieldset>
+            <legend>Contact Values</legend>
+            <p>
+                <label for="email">Email</label>
+                <input name="email" id="email" type="email" placeholder="Email" value="{{ .Email }}">
+                <span class="error"></span>
+            </p>
+            <p>
+                <label for="first">First Name</label>
+                <input name="first" id="first" type="text" placeholder="First Name" value="{{ .First }}">
+                <span class="error"></span>
+            </p>
+            <p>
+                <label for="last">Last Name</label>
+                <input name="last" id="last" type="text" placeholder="Last Name" value="{{ .Last }}">
+                <span class="error"></span>
+            </p>
+            <p>
+                <label for="phone">Phone</label>
+                <input name="phone" id="phone" type="text" placeholder="Phone" value="{{ .Phone }}">
+                <span class="error"></span>
+            </p>
+            <button>Save</button>
+        </fieldset>
+    </form>
+
+    <p>
+        <a href="/contacts">Back</a>
+    </p>
+
+{{end}}
