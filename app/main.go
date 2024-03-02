@@ -14,13 +14,15 @@ import (
 const port = ":8000"
 const dbString = "host=localhost port=5432 dbname=contact_app user=fouche password=javac"
 
+var cfg AppConfig
+
 func main() {
 	dbPool, err := run()
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	// we have database connection, close it after app stops
+	// we have database connection, close it after cfg stops
 	defer dbPool.Close()
 
 	srv := &http.Server{
@@ -40,6 +42,8 @@ func run() (*sql.DB, error) {
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying argh...")
 	}
+
+	cfg.InProduction = false
 
 	return dbPool, nil
 }
