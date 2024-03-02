@@ -30,7 +30,7 @@ func main() {
 
 	srv := &http.Server{
 		Addr:    port,
-		Handler: session.LoadAndSave(routes()),
+		Handler: routes(),
 	}
 	fmt.Println(fmt.Sprintf("Starting application on %s", port))
 
