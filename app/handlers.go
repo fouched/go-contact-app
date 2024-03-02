@@ -16,7 +16,7 @@ func ContactsView(w http.ResponseWriter, r *http.Request) {
 	RenderTemplate(w, "contacts.view.tmpl", nil)
 }
 
-// ContactsList is displays contacts
+// ContactsList displays contacts
 func ContactsList(w http.ResponseWriter, r *http.Request) {
 	err, contacts := data.SelectContacts()
 	if err != nil {
