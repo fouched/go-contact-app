@@ -17,7 +17,7 @@ func ContactsView(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["contact"] = models.Contact{}
 
-	RenderTemplate(w, "contacts.view.tmpl", &models.TemplateData{
+	RenderTemplate(w, r, "contacts.view.tmpl", &models.TemplateData{
 		Data: data,
 	})
 }
@@ -32,7 +32,9 @@ func ContactsList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["contacts"] = contacts
 
-	RenderTemplate(w, "contacts.list.tmpl", &models.TemplateData{
+	//session.Put(r.Context(), "flash", "bar")
+
+	RenderTemplate(w, r, "contacts.list.tmpl", &models.TemplateData{
 		Data: data,
 	})
 }
@@ -58,15 +60,27 @@ func ContactsAdd(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("DB error, cannot insert contact", err)
 	}
 
+	session.Put(r.Context(), "flash", "bar")
+
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
 }
 
 // RenderTemplate TODO extract below to cache template parsing in a production environment
-func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) {
+
+	td = AddDefaultData(td, r)
+
 	parsedTemplate, _ := template.ParseFiles("./templates/"+tmpl, "./templates/base.layout.tmpl")
 	err := parsedTemplate.Execute(w, td)
 	if err != nil {
 		fmt.Println("Error parsing template", err)
 		return
 	}
+
+}
+
+func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	td.Flash = session.PopString(r.Context(), "flash")
+
+	return td
 }
