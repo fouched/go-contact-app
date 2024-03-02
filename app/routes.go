@@ -10,8 +10,8 @@ func routes() http.Handler {
 
 	mux.Get("/", Home)
 	mux.Get("/contacts", ContactsList)
-	mux.Get("/contacts/new", ContactsAdd)
-	mux.Post("/contacts/new", ContactsNew)
+	mux.Get("/contacts/new", ContactsView)
+	mux.Post("/contacts/new", ContactsAdd)
 
 	return mux
 }

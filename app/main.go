@@ -3,13 +3,12 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"log"
-	"net/http"
-	"time"
-
+	"github.com/fouched/go-contact-app/app/data"
 	_ "github.com/jackc/pgx/v5"
 	_ "github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"log"
+	"net/http"
 )
 
 const port = ":8000"
@@ -17,9 +16,6 @@ const dbString = "host=localhost port=5432 dbname=contact_app user=fouche passwo
 
 func main() {
 	dbPool, err := run()
-	if err != nil {
-		log.Fatal(err)
-	}
 	// close db conn pool after app stops
 	defer dbPool.Close()
 
@@ -37,33 +33,10 @@ func main() {
 }
 
 func run() (*sql.DB, error) {
-	conn, err := DatabasePool(dbString)
+	dbPool, err := data.CreateDbPool(dbString)
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying argh...")
 	}
 
-	// set the db connection for all handlers
-	SetHandlerDb(conn)
-
-	return conn, nil
-}
-
-func DatabasePool(dsn string) (*sql.DB, error) {
-	// no error thrown even host or db does not exist
-	conn, err := sql.Open("pgx", dsn)
-	if err != nil {
-		return nil, err
-	}
-
-	conn.SetMaxOpenConns(10)
-	conn.SetMaxIdleConns(5)
-	conn.SetConnMaxLifetime(5 * time.Minute)
-
-	// do a real test to see if we have a db conn
-	err = conn.Ping()
-	if err != nil {
-		return nil, err
-	}
-
-	return conn, nil
+	return dbPool, nil
 }
