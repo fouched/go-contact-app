@@ -3,7 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
-	"github.com/fouched/go-contact-app/app/data"
+	"github.com/fouched/go-contact-app/app/repo"
 	_ "github.com/jackc/pgx/v5"
 	_ "github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -36,7 +36,7 @@ func main() {
 }
 
 func run() (*sql.DB, error) {
-	dbPool, err := data.CreateDbPool(dbString)
+	dbPool, err := repo.CreateDbPool(dbString)
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying argh...")
 	}

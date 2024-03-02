@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/fouched/go-contact-app/app/data"
 	"github.com/fouched/go-contact-app/app/models"
+	"github.com/fouched/go-contact-app/app/repo"
 	"html/template"
 	"net/http"
 )
@@ -19,12 +19,17 @@ func ContactsView(w http.ResponseWriter, r *http.Request) {
 
 // ContactsList displays contacts
 func ContactsList(w http.ResponseWriter, r *http.Request) {
-	err, contacts := data.SelectContacts()
+	err, contacts := repo.SelectContacts()
 	if err != nil {
 		fmt.Println("DB error, cannot query contacts", err)
 	}
 
-	RenderTemplate(w, "contacts.list.tmpl", contacts)
+	data := make(map[string]interface{})
+	data["contacts"] = contacts
+
+	RenderTemplate(w, "contacts.list.tmpl", &models.TemplateData{
+		Data: data,
+	})
 }
 
 // ContactsAdd persists a contact and redirects to the list page
@@ -42,7 +47,7 @@ func ContactsAdd(w http.ResponseWriter, r *http.Request) {
 		Email: r.Form.Get("email"),
 	}
 
-	err, _ := data.AddContact(contact)
+	err, _ := repo.AddContact(contact)
 
 	if err != nil {
 		fmt.Println("DB error, cannot insert contact", err)
@@ -52,7 +57,7 @@ func ContactsAdd(w http.ResponseWriter, r *http.Request) {
 }
 
 // RenderTemplate TODO extract below to cache template parsing in a production environment
-func RenderTemplate(w http.ResponseWriter, tmpl string, td any) {
+func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 	parsedTemplate, _ := template.ParseFiles("./templates/"+tmpl, "./templates/base.layout.tmpl")
 	err := parsedTemplate.Execute(w, td)
 	if err != nil {
