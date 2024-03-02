@@ -16,14 +16,17 @@ const dbString = "host=localhost port=5432 dbname=contact_app user=fouche passwo
 
 func main() {
 	dbPool, err := run()
-	// close db conn pool after app stops
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// we have database connection, close it after app stops
 	defer dbPool.Close()
 
 	srv := &http.Server{
 		Addr:    port,
 		Handler: routes(),
 	}
-
 	fmt.Println(fmt.Sprintf("Starting application on %s", port))
 
 	err = srv.ListenAndServe()

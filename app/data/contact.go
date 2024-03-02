@@ -34,7 +34,6 @@ func AddContact(first string, last string, phone string, email string) (error, i
 		phone,
 		email,
 	).Scan(&id)
-
 	fmt.Println(fmt.Sprintf("Inserted contact with id %d", id))
 
 	return err, id
