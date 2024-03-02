@@ -25,7 +25,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	// we have database connection, close it after app stops
+	// we have database connectivity, close it after app stops
 	defer dbPool.Close()
 
 	srv := &http.Server{
