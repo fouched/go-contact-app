@@ -14,7 +14,12 @@ func Home(w http.ResponseWriter, r *http.Request) {
 }
 
 func ContactsView(w http.ResponseWriter, r *http.Request) {
-	RenderTemplate(w, "contacts.view.tmpl", nil)
+	data := make(map[string]interface{})
+	data["contact"] = models.Contact{}
+
+	RenderTemplate(w, "contacts.view.tmpl", &models.TemplateData{
+		Data: data,
+	})
 }
 
 // ContactsList displays contacts
