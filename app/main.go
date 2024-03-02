@@ -54,7 +54,5 @@ func run() (*sql.DB, error) {
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	session.Cookie.Secure = app.InProduction
 
-	app.Session = session
-
 	return dbPool, nil
 }
