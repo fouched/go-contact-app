@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/fouched/go-contact-app/app/data"
+	"github.com/fouched/go-contact-app/app/models"
 	"html/template"
 	"net/http"
 )
@@ -34,11 +35,14 @@ func ContactsAdd(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err, _ := data.AddContact(
-		r.Form.Get("first"),
-		r.Form.Get("last"),
-		r.Form.Get("phone"),
-		r.Form.Get("email"))
+	contact := models.Contact{
+		First: r.Form.Get("first"),
+		Last:  r.Form.Get("last"),
+		Phone: r.Form.Get("phone"),
+		Email: r.Form.Get("email"),
+	}
+
+	err, _ := data.AddContact(contact)
 
 	if err != nil {
 		fmt.Println("DB error, cannot insert contact", err)

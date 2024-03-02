@@ -23,16 +23,16 @@ func SelectContacts() (error, []models.Contact) {
 	return err, contacts
 }
 
-func AddContact(first string, last string, phone string, email string) (error, int) {
+func AddContact(c models.Contact) (error, int) {
 	var id int
 	stmt := `INSERT INTO contacts (first, last, phone, email)
     			VALUES($1, $2, $3, $4) returning id`
 
 	err := db.QueryRow(stmt,
-		first,
-		last,
-		phone,
-		email,
+		c.First,
+		c.Last,
+		c.Phone,
+		c.Email,
 	).Scan(&id)
 	fmt.Println(fmt.Sprintf("Inserted contact with id %d", id))
 
