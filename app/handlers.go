@@ -32,8 +32,6 @@ func ContactsList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["contacts"] = contacts
 
-	//session.Put(r.Context(), "flash", "bar")
-
 	RenderTemplate(w, r, "contacts.list.tmpl", &models.TemplateData{
 		Data: data,
 	})
@@ -60,7 +58,7 @@ func ContactsAdd(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("DB error, cannot insert contact", err)
 	}
 
-	session.Put(r.Context(), "flash", "bar")
+	session.Put(r.Context(), "success", "Contact created")
 
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
 }
@@ -80,7 +78,9 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, tmpl string, td *mod
 }
 
 func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
-	td.Flash = session.PopString(r.Context(), "flash")
+	td.Success = session.PopString(r.Context(), "success")
+	td.Warning = session.PopString(r.Context(), "warning")
+	td.Error = session.PopString(r.Context(), "error")
 
 	return td
 }

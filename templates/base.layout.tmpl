@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact App</title>
+    <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
     {{block "css" .}}
 
     {{end}}
@@ -15,9 +16,32 @@
 
     {{end}}
 
+    <script src="https://unpkg.com/notie"></script>
+
     {{block "js" .}}
 
     {{end}}
+
+    <script>
+        function notify(msg, msgType) {
+            notie.alert({
+                type: msgType,
+                text: msg,
+            })
+        }
+
+        {{with .Success}}
+            notify("{{.}}", "success")
+        {{end}}
+
+        {{with .Warning}}
+            notify("{{.}}", "warning")
+        {{end}}
+
+        {{with .Error}}
+            notify("{{.}}", "error")
+        {{end}}
+    </script>
 </body>
 </html>
 {{end}}
