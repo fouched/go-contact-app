@@ -13,9 +13,13 @@ func routes() http.Handler {
 	mux.Use(SessionLoad)
 
 	mux.Get("/", Home)
-	mux.Get("/contacts", ContactsList)
-	mux.Get("/contacts/new", ContactsView)
-	mux.Post("/contacts/new", ContactsAdd)
+
+	mux.Route("/contacts", func(r chi.Router) {
+		r.Get("/", ContactsList)
+		r.Get("/new", ContactsView)
+		r.Post("/new", ContactsAdd)
+		r.Get("/{id}", ContactsById)
+	})
 
 	return mux
 }

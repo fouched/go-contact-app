@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/fouched/go-contact-app/app/models"
 	"github.com/fouched/go-contact-app/app/repo"
+	"github.com/go-chi/chi/v5"
 	"html/template"
 	"net/http"
+	"strconv"
 )
 
 // Home is the home page handler
@@ -61,6 +63,21 @@ func ContactsAdd(w http.ResponseWriter, r *http.Request) {
 	session.Put(r.Context(), "success", "Contact created")
 
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
+}
+
+func ContactsById(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	contactId, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println("Contact ID not an Integer", err)
+		return
+	}
+
+	data := make(map[string]int)
+	data["id"] = contactId
+	RenderTemplate(w, r, "contacts.test.tmpl", &models.TemplateData{
+		IntMap: data,
+	})
 }
 
 // RenderTemplate TODO extract below to cache template parsing in a production environment
