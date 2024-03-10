@@ -50,13 +50,14 @@ func run() (*sql.DB, error) {
 		log.Fatal("Cannot connect to database! Dying argh...")
 	}
 
-	app.InProduction = false
-
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
 	session.Cookie.Persist = true
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	session.Cookie.Secure = app.InProduction
+
+	app.Session = session
+	app.InProduction = false
 
 	hc := handlers.NewConfig(&app, dbPool)
 	handlers.NewHandlers(hc)
