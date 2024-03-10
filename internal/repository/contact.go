@@ -1,8 +1,8 @@
-package repo
+package repository
 
 import (
 	"fmt"
-	"github.com/fouched/go-contact-app/app/models"
+	"github.com/fouched/go-contact-app/internal/models"
 )
 
 func SelectContacts() (error, []models.Contact) {

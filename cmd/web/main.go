@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/alexedwards/scs/v2"
-	"github.com/fouched/go-contact-app/app/repo"
+	"github.com/fouched/go-contact-app/internal/config"
+	"github.com/fouched/go-contact-app/internal/handlers"
+	"github.com/fouched/go-contact-app/internal/render"
+	"github.com/fouched/go-contact-app/internal/repository"
 	_ "github.com/jackc/pgx/v5"
 	_ "github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -16,7 +19,7 @@ import (
 const port = ":8000"
 const dbString = "host=localhost port=5432 dbname=contact_app user=fouche password=javac"
 
-var app AppConfig
+var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
@@ -38,10 +41,11 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
 }
 
 func run() (*sql.DB, error) {
-	dbPool, err := repo.CreateDbPool(dbString)
+	dbPool, err := repository.CreateDbPool(dbString)
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying argh...")
 	}
@@ -53,6 +57,10 @@ func run() (*sql.DB, error) {
 	session.Cookie.Persist = true
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	session.Cookie.Secure = app.InProduction
+
+	hc := handlers.NewConfig(&app, dbPool)
+	handlers.NewHandlers(hc)
+	render.NewRenderer(&app)
 
 	return dbPool, nil
 }
