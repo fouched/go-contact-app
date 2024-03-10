@@ -17,7 +17,7 @@ func routes() http.Handler {
 
 	mux.Route("/contacts", func(r chi.Router) {
 		r.Get("/", handlers.Instance.ContactsList)
-		r.Get("/new", handlers.Instance.ContactsView)
+		r.Get("/new", handlers.Instance.ContactsAddNew)
 		r.Post("/new", handlers.Instance.ContactsAdd)
 		r.Get("/{id}", handlers.Instance.ContactsById)
 	})

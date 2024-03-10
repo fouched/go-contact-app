@@ -5,7 +5,7 @@ import (
 	"github.com/fouched/go-contact-app/internal/models"
 )
 
-func SelectContacts() (error, []models.Contact) {
+func SelectContacts() ([]models.Contact, error) {
 	rows, err := db.Query("SELECT * FROM contacts")
 	// close the rows when function exists
 	defer rows.Close()
@@ -20,10 +20,10 @@ func SelectContacts() (error, []models.Contact) {
 		contacts = append(contacts, c)
 	}
 
-	return err, contacts
+	return contacts, err
 }
 
-func AddContact(c models.Contact) (error, int) {
+func InsertContact(c models.Contact) (int, error) {
 	var id int
 	stmt := `INSERT INTO contacts (first, last, phone, email)
     			VALUES($1, $2, $3, $4) returning id`
@@ -36,5 +36,13 @@ func AddContact(c models.Contact) (error, int) {
 	).Scan(&id)
 	fmt.Println(fmt.Sprintf("Inserted contact with id %d", id))
 
-	return err, id
+	return id, err
+}
+
+func SelectContactById(id int) (models.Contact, error) {
+	row := db.QueryRow("SELECT * FROM contacts WHERE id = $1", id)
+	var c models.Contact
+	err := row.Scan(&c.ID, &c.First, &c.Last, &c.Phone, &c.Email)
+
+	return c, err
 }

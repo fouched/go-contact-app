@@ -10,18 +10,18 @@ import (
 	"strconv"
 )
 
-func (m *HandlerConfig) ContactsView(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerConfig) ContactsAddNew(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["contact"] = models.Contact{}
 
-	render.Template(w, r, "/contacts.view.tmpl", &models.TemplateData{
+	render.Template(w, r, "/contacts.add.tmpl", &models.TemplateData{
 		Data: data,
 	})
 }
 
 // ContactsList displays contacts
 func (m *HandlerConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
-	err, contacts := repository.SelectContacts()
+	contacts, err := repository.SelectContacts()
 	if err != nil {
 		fmt.Println("DB error, cannot query contacts", err)
 	}
@@ -30,6 +30,26 @@ func (m *HandlerConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
 	data["contacts"] = contacts
 
 	render.Template(w, r, "/contacts.list.tmpl", &models.TemplateData{
+		Data: data,
+	})
+}
+
+func (m *HandlerConfig) ContactsById(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	contactId, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println("Contact ID not an Integer", err)
+		return
+	}
+
+	contact, err := repository.SelectContactById(contactId)
+	if err != nil {
+		fmt.Println("DB error, cannot query contacts", err)
+	}
+
+	data := make(map[string]interface{})
+	data["contact"] = contact
+	render.Template(w, r, "/contacts.view.tmpl", &models.TemplateData{
 		Data: data,
 	})
 }
@@ -49,7 +69,7 @@ func (m *HandlerConfig) ContactsAdd(w http.ResponseWriter, r *http.Request) {
 		Email: r.Form.Get("email"),
 	}
 
-	err, _ := repository.AddContact(contact)
+	_, err := repository.InsertContact(contact)
 
 	if err != nil {
 		fmt.Println("DB error, cannot insert contact", err)
@@ -58,19 +78,4 @@ func (m *HandlerConfig) ContactsAdd(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "success", "Contact created")
 
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
-}
-
-func (m *HandlerConfig) ContactsById(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-	contactId, err := strconv.Atoi(id)
-	if err != nil {
-		fmt.Println("Contact ID not an Integer", err)
-		return
-	}
-
-	data := make(map[string]int)
-	data["id"] = contactId
-	render.Template(w, r, "/contacts.test.tmpl", &models.TemplateData{
-		IntMap: data,
-	})
 }
