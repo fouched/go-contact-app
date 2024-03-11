@@ -10,11 +10,11 @@ import (
 	"strconv"
 )
 
-func (m *HandlerConfig) ContactsAddNew(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerConfig) ContactsNewGet(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["contact"] = models.Contact{}
 
-	render.Template(w, r, "/contacts.add.tmpl", &models.TemplateData{
+	render.Template(w, r, "/contacts.new.tmpl", &models.TemplateData{
 		Data: data,
 	})
 }
@@ -34,7 +34,7 @@ func (m *HandlerConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (m *HandlerConfig) ContactsById(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerConfig) ContactsView(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	contactId, err := strconv.Atoi(id)
 	if err != nil {
@@ -54,8 +54,59 @@ func (m *HandlerConfig) ContactsById(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// ContactsAdd persists a contact and redirects to the list page
-func (m *HandlerConfig) ContactsAdd(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerConfig) ContactsEditGet(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	contactId, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println("Contact ID not an Integer", err)
+		return
+	}
+
+	contact, err := repository.SelectContactById(contactId)
+	if err != nil {
+		fmt.Println("DB error, cannot query contacts", err)
+	}
+
+	data := make(map[string]interface{})
+	data["contact"] = contact
+	render.Template(w, r, "/contacts.edit.tmpl", &models.TemplateData{
+		Data: data,
+	})
+}
+
+func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	contactId, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println("Contact ID not an Integer", err)
+		return
+	}
+
+	pe := r.ParseForm()
+	if pe != nil {
+		fmt.Println("Cannot parse form", pe)
+		return
+	}
+
+	contact := models.Contact{
+		ID:    contactId,
+		First: r.Form.Get("first"),
+		Last:  r.Form.Get("last"),
+		Phone: r.Form.Get("phone"),
+		Email: r.Form.Get("email"),
+	}
+
+	err = repository.UpdateContactById(contact)
+	if err != nil {
+		fmt.Println("Could not update contact", err)
+		return
+	}
+
+	http.Redirect(w, r, "/contacts/"+id, http.StatusSeeOther)
+}
+
+// ContactsNew persists a contact and redirects to the list page
+func (m *HandlerConfig) ContactsNew(w http.ResponseWriter, r *http.Request) {
 	pe := r.ParseForm()
 	if pe != nil {
 		fmt.Println("Cannot parse form", pe)

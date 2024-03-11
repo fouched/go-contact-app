@@ -46,3 +46,16 @@ func SelectContactById(id int) (models.Contact, error) {
 
 	return c, err
 }
+
+func UpdateContactById(contact models.Contact) error {
+	stmt := `UPDATE contacts SET 
+                    first = $2, 
+                    last = $3, 
+                    phone = $4, 
+                    email = $5
+    		WHERE id = $1`
+
+	_, err := db.Exec(stmt, contact.ID, contact.First, contact.Last, contact.Phone, contact.Email)
+
+	return err
+}
