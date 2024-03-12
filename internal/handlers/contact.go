@@ -19,6 +19,32 @@ func (m *HandlerConfig) ContactsNewGet(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// ContactsNew persists a contact and redirects to the list page
+func (m *HandlerConfig) ContactsNew(w http.ResponseWriter, r *http.Request) {
+	pe := r.ParseForm()
+	if pe != nil {
+		fmt.Println("Cannot parse form", pe)
+		return
+	}
+
+	contact := models.Contact{
+		First: r.Form.Get("first"),
+		Last:  r.Form.Get("last"),
+		Phone: r.Form.Get("phone"),
+		Email: r.Form.Get("email"),
+	}
+
+	_, err := repository.InsertContact(contact)
+
+	if err != nil {
+		fmt.Println("DB error, cannot insert contact", err)
+	}
+
+	m.App.Session.Put(r.Context(), "success", "Contact created")
+
+	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
+}
+
 // ContactsList displays contacts
 func (m *HandlerConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
 	contacts, err := repository.SelectContacts()
@@ -103,30 +129,4 @@ func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request)
 	}
 
 	http.Redirect(w, r, "/contacts/"+id, http.StatusSeeOther)
-}
-
-// ContactsNew persists a contact and redirects to the list page
-func (m *HandlerConfig) ContactsNew(w http.ResponseWriter, r *http.Request) {
-	pe := r.ParseForm()
-	if pe != nil {
-		fmt.Println("Cannot parse form", pe)
-		return
-	}
-
-	contact := models.Contact{
-		First: r.Form.Get("first"),
-		Last:  r.Form.Get("last"),
-		Phone: r.Form.Get("phone"),
-		Email: r.Form.Get("email"),
-	}
-
-	_, err := repository.InsertContact(contact)
-
-	if err != nil {
-		fmt.Println("DB error, cannot insert contact", err)
-	}
-
-	m.App.Session.Put(r.Context(), "success", "Contact created")
-
-	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
 }
