@@ -128,5 +128,24 @@ func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	http.Redirect(w, r, "/contacts/"+id, http.StatusSeeOther)
+	m.App.Session.Put(r.Context(), "success", "Contact updated")
+	http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
+}
+
+func (m *HandlerConfig) ContactsDeletePost(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
+	contactId, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println("Contact ID not an Integer", err)
+		return
+	}
+
+	err = repository.DeleteContactById(contactId)
+	if err != nil {
+		fmt.Println("Could not delete contact", err)
+		return
+	}
+
+	m.App.Session.Put(r.Context(), "success", "Contact deleted")
+	http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
 }

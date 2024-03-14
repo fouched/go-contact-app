@@ -6,7 +6,7 @@ import (
 )
 
 func SelectContacts() ([]models.Contact, error) {
-	rows, err := db.Query("SELECT * FROM contacts")
+	rows, err := db.Query("SELECT * FROM contacts ORDER BY last, first")
 	// close the rows when function exists
 	defer rows.Close()
 
@@ -56,6 +56,13 @@ func UpdateContactById(contact models.Contact) error {
     		WHERE id = $1`
 
 	_, err := db.Exec(stmt, contact.ID, contact.First, contact.Last, contact.Phone, contact.Email)
+
+	return err
+}
+
+func DeleteContactById(id int) error {
+	stmt := `DELETE FROM contacts WHERE id = $1`
+	_, err := db.Exec(stmt, id)
 
 	return err
 }
