@@ -3,7 +3,7 @@
     <h2>Contacts Page</h2>
     <form action="/contacts" method="get" class="tool-bar">
         <label for="search">Search Term</label>
-        <input id="search" type="search" name="q" value=""/>
+        <input id="q" type="search" name="q" value="{{ .StringMap.q}}"/>
         <input type="submit" value="Search"/>
         <table>
             <thead>

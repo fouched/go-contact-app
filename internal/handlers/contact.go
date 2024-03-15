@@ -47,11 +47,16 @@ func (m *HandlerConfig) ContactsNew(w http.ResponseWriter, r *http.Request) {
 
 // ContactsList displays contacts
 func (m *HandlerConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
-	contacts, err := repository.SelectContacts()
+	pe := r.ParseForm()
+	if pe != nil {
+		fmt.Println("Cannot parse form", pe)
+		return
+	}
+
+	contacts, err := repository.SelectContacts(r.Form.Get("q"))
 	if err != nil {
 		fmt.Println("DB error, cannot query contacts", err)
 	}
-
 	data := make(map[string]interface{})
 	data["contacts"] = contacts
 
