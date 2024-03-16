@@ -5,14 +5,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact App</title>
+    <script src="https://unpkg.com/htmx.org" crossorigin="anonymous"></script>
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
     {{block "css" .}}
 
     {{end}}
 </head>
-<body>
+<body hx-boost="true">
 <h1>Contact HTMX Application</h1>
-    {{block "content" .}}
+<!-- fake menu -->
+<a href="/contacts">Contacts</a>
+<a href="/settings">Settings</a>
+<a href="/help">Help</a>
+
+{{block "content" .}}
 
     {{end}}
 

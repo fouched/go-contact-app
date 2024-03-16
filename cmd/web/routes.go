@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/fouched/go-contact-app/internal/apix"
 	"github.com/fouched/go-contact-app/internal/handlers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -24,6 +25,10 @@ func routes() http.Handler {
 		r.Post("/{id}/edit", handlers.Instance.ContactsEditPost)
 		r.Post("/{id}/delete", handlers.Instance.ContactsDeletePost)
 	})
+
+	mux.Get("/playground", handlers.Instance.PlaygroundGet)
+
+	mux.Post("/apix/contacts", apix.Instance.ContactsList)
 
 	return mux
 }

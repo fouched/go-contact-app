@@ -47,25 +47,20 @@ func (m *HandlerConfig) ContactsNew(w http.ResponseWriter, r *http.Request) {
 
 // ContactsList displays contacts
 func (m *HandlerConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
+
 	pe := r.ParseForm()
 	if pe != nil {
 		fmt.Println("Cannot parse form", pe)
 		return
 	}
 
-	contacts, err := repository.SelectContacts(r.Form.Get("q"))
-	if err != nil {
-		fmt.Println("DB error, cannot query contacts", err)
-	}
-	data := make(map[string]interface{})
-	data["contacts"] = contacts
-
 	render.Template(w, r, "/contacts.list.tmpl", &models.TemplateData{
-		Data: data,
+		//Data: data,
 	})
 }
 
 func (m *HandlerConfig) ContactsView(w http.ResponseWriter, r *http.Request) {
+
 	id := chi.URLParam(r, "id")
 	contactId, err := strconv.Atoi(id)
 	if err != nil {
@@ -86,6 +81,7 @@ func (m *HandlerConfig) ContactsView(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *HandlerConfig) ContactsEditGet(w http.ResponseWriter, r *http.Request) {
+
 	id := chi.URLParam(r, "id")
 	contactId, err := strconv.Atoi(id)
 	if err != nil {
@@ -106,6 +102,7 @@ func (m *HandlerConfig) ContactsEditGet(w http.ResponseWriter, r *http.Request) 
 }
 
 func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request) {
+
 	id := chi.URLParam(r, "id")
 	contactId, err := strconv.Atoi(id)
 	if err != nil {
