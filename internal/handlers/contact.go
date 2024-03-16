@@ -54,9 +54,7 @@ func (m *HandlerConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	render.Template(w, r, "/contacts.list.tmpl", &models.TemplateData{
-		//Data: data,
-	})
+	render.Template(w, r, "/contacts.list.tmpl", &models.TemplateData{})
 }
 
 func (m *HandlerConfig) ContactsView(w http.ResponseWriter, r *http.Request) {
