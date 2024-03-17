@@ -25,7 +25,7 @@ func routes() http.Handler {
 		r.Get("/{id}", handlers.Instance.ContactsView)
 		r.Get("/{id}/edit", handlers.Instance.ContactsEditGet)
 		r.Post("/{id}/edit", handlers.Instance.ContactsEditPost)
-		r.Post("/{id}/delete", handlers.Instance.ContactsDeletePost)
+		r.Delete("/{id}/delete", handlers.Instance.ContactsDelete)
 	})
 
 	mux.Get("/playground", handlers.Instance.PlaygroundGet)

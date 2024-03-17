@@ -135,7 +135,7 @@ func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request)
 	http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
 }
 
-func (m *HandlerConfig) ContactsDeletePost(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerConfig) ContactsDelete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	contactId, err := strconv.Atoi(id)
 	if err != nil {
