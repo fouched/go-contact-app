@@ -1,0 +1,7 @@
+create_table ("contacts") {
+    t.Column("id", "integer", {primary:true})
+    t.Column("first", "string", {"size":64, "default":""})
+    t.Column("last", "string", {"size":64, "default":""})
+    t.Column("phone", "string", {"size":32, "default":""})
+    t.Column("email", "string", {"size":128, "default":""})
+}

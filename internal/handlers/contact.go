@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 func (m *HandlerConfig) ContactsNewGet(w http.ResponseWriter, r *http.Request) {
@@ -28,10 +29,12 @@ func (m *HandlerConfig) ContactsNew(w http.ResponseWriter, r *http.Request) {
 	}
 
 	contact := models.Contact{
-		First: r.Form.Get("first"),
-		Last:  r.Form.Get("last"),
-		Phone: r.Form.Get("phone"),
-		Email: r.Form.Get("email"),
+		First:     r.Form.Get("first"),
+		Last:      r.Form.Get("last"),
+		Phone:     r.Form.Get("phone"),
+		Email:     r.Form.Get("email"),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
 	}
 
 	_, err := repository.InsertContact(contact)

@@ -17,7 +17,8 @@
             </tbody>
         </table>
         <p>
-            <a href="/contacts/new">Add Contact</a>
+            <!-- Do not boost links that load a new page -->
+            <a href="/contacts/new" hx-boost="false">Add Contact</a>
         </p>
     </form>
 {{end}}
