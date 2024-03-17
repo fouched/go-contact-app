@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Contact App</title>
-    <script src="https://unpkg.com/htmx.org" crossorigin="anonymous"></script>
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
+    <script src="/static/js/htmx-1.9.11.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/notie-4.3.1.min.css">
     {{block "css" .}}
 
     {{end}}
@@ -19,35 +19,34 @@
 <a href="/help">Help</a>
 
 {{block "content" .}}
+{{end}}
 
+<script src="/static/js/notie-4.3.1.min.js"></script>
+
+{{block "js" .}}
+
+{{end}}
+
+<script>
+    function notify(msg, msgType) {
+        notie.alert({
+            type: msgType,
+            text: msg,
+        })
+    }
+
+    {{with .Success}}
+        notify("{{.}}", "success")
     {{end}}
 
-    <script src="https://unpkg.com/notie"></script>
-
-    {{block "js" .}}
-
+    {{with .Warning}}
+        notify("{{.}}", "warning")
     {{end}}
 
-    <script>
-        function notify(msg, msgType) {
-            notie.alert({
-                type: msgType,
-                text: msg,
-            })
-        }
-
-        {{with .Success}}
-            notify("{{.}}", "success")
-        {{end}}
-
-        {{with .Warning}}
-            notify("{{.}}", "warning")
-        {{end}}
-
-        {{with .Error}}
-            notify("{{.}}", "error")
-        {{end}}
-    </script>
+    {{with .Error}}
+        notify("{{.}}", "error")
+    {{end}}
+</script>
 </body>
 </html>
 {{end}}
