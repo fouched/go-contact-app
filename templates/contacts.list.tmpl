@@ -5,6 +5,7 @@
         <label for="q">Search Term</label>
         <input id="q" type="search" name="q" value="{{ .StringMap.q}}"/>
         <button hx-post="/apix/contacts" hx-target="#contactResults" hx-swap="innerHTML">Search</button>
+        <br><br>
         <table>
             <thead>
             <tr>
