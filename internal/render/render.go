@@ -19,7 +19,7 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.Te
 
 	td = AddDefaultData(td, r)
 
-	parsedTemplate, _ := template.ParseFiles(pathToTemplates+tmpl, pathToTemplates+"/base.layout.tmpl")
+	parsedTemplate, _ := template.ParseFiles(pathToTemplates+tmpl, pathToTemplates+"/base.layout.gohtml")
 	err := parsedTemplate.Execute(w, td)
 	if err != nil {
 		fmt.Println("Error parsing template", err)

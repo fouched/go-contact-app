@@ -24,7 +24,7 @@ func (m *HtmxApiConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["contacts"] = contacts
 
-	renderx.Template(w, r, "/contacts.results.xtmpl", &models.TemplateData{
+	renderx.Template(w, r, "/contacts.results.gohtmx", &models.TemplateData{
 		Data: data,
 	})
 }

@@ -8,5 +8,5 @@ import (
 
 func (m *HandlerConfig) PlaygroundGet(w http.ResponseWriter, r *http.Request) {
 
-	render.Template(w, r, "/playground.htmx.tmpl", &models.TemplateData{})
+	render.Template(w, r, "/playground.htmx.gohtml", &models.TemplateData{})
 }

@@ -15,7 +15,7 @@ func (m *HandlerConfig) ContactsNewGet(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["contact"] = models.Contact{}
 
-	render.Template(w, r, "/contacts.new.tmpl", &models.TemplateData{
+	render.Template(w, r, "/contacts.new.gohtml", &models.TemplateData{
 		Data: data,
 	})
 }
@@ -57,7 +57,7 @@ func (m *HandlerConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	render.Template(w, r, "/contacts.list.tmpl", &models.TemplateData{})
+	render.Template(w, r, "/contacts.list.gohtml", &models.TemplateData{})
 }
 
 func (m *HandlerConfig) ContactsView(w http.ResponseWriter, r *http.Request) {
@@ -76,7 +76,7 @@ func (m *HandlerConfig) ContactsView(w http.ResponseWriter, r *http.Request) {
 
 	data := make(map[string]interface{})
 	data["contact"] = contact
-	render.Template(w, r, "/contacts.view.tmpl", &models.TemplateData{
+	render.Template(w, r, "/contacts.view.gohtml", &models.TemplateData{
 		Data: data,
 	})
 }
@@ -97,7 +97,7 @@ func (m *HandlerConfig) ContactsEditGet(w http.ResponseWriter, r *http.Request) 
 
 	data := make(map[string]interface{})
 	data["contact"] = contact
-	render.Template(w, r, "/contacts.edit.tmpl", &models.TemplateData{
+	render.Template(w, r, "/contacts.edit.gohtml", &models.TemplateData{
 		Data: data,
 	})
 }

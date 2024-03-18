@@ -7,9 +7,9 @@ import (
 )
 
 func (m *HandlerConfig) Settings(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "/settings.tmpl", &models.TemplateData{})
+	render.Template(w, r, "/settings.gohtml", &models.TemplateData{})
 }
 
 func (m *HandlerConfig) Help(w http.ResponseWriter, r *http.Request) {
-	render.Template(w, r, "/help.tmpl", &models.TemplateData{})
+	render.Template(w, r, "/help.gohtml", &models.TemplateData{})
 }
