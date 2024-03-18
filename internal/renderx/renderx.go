@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-var pathToTemplates = "./templates/htmx"
+var pathToTemplates = "./templates/snippets"
 var app *config.AppConfig
 
 func NewRenderer(a *config.AppConfig) {

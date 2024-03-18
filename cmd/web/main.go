@@ -66,7 +66,7 @@ func run() (*sql.DB, error) {
 	handlers.NewHandlers(hc)
 	render.NewRenderer(&app)
 
-	// htmx snippet handling
+	// snippets snippet handling
 	hx := apix.NewConfig(&app, dbPool)
 	apix.NewHandlers(hx)
 	renderx.NewRenderer(&app)
