@@ -7,22 +7,30 @@
             <p>
                 <label for="email">Email</label>
                 <input name="email" id="email" type="email" placeholder="Email" value="{{ .Data.contact.Email }}">
-                <span class="error"></span>
+                {{with .Form.Errors.Get "email"}}
+                <span class="error">{{.}}</span>
+                {{end}}
             </p>
             <p>
                 <label for="first">First Name</label>
                 <input name="first" id="first" type="text" placeholder="First Name" value="{{ .Data.contact.First }}">
-                <span class="error"></span>
+                {{with .Form.Errors.Get "first"}}
+                    <span class="error">{{.}}</span>
+                {{end}}
             </p>
             <p>
                 <label for="last">Last Name</label>
                 <input name="last" id="last" type="text" placeholder="Last Name" value="{{ .Data.contact.Last }}">
-                <span class="error"></span>
+                {{with .Form.Errors.Get "last"}}
+                    <span class="error">{{.}}</span>
+                {{end}}
             </p>
             <p>
                 <label for="phone">Phone</label>
                 <input name="phone" id="phone" type="text" placeholder="Phone" value="{{ .Data.contact.Phone }}">
-                <span class="error"></span>
+                {{with .Form.Errors.Get "phone"}}
+                    <span class="error">{{.}}</span>
+                {{end}}
             </p>
             <button>Save</button>
         </fieldset>

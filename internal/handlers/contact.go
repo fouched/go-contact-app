@@ -5,6 +5,7 @@ import (
 	"github.com/fouched/go-contact-app/internal/models"
 	"github.com/fouched/go-contact-app/internal/render"
 	"github.com/fouched/go-contact-app/internal/repository"
+	"github.com/fouched/go-contact-app/internal/validation"
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
@@ -16,6 +17,7 @@ func (m *HandlerConfig) ContactsNewGet(w http.ResponseWriter, r *http.Request) {
 	data["contact"] = models.Contact{}
 
 	render.Template(w, r, "/contacts.new.gohtml", &models.TemplateData{
+		Form: validation.New(nil),
 		Data: data,
 	})
 }
@@ -35,6 +37,22 @@ func (m *HandlerConfig) ContactsNew(w http.ResponseWriter, r *http.Request) {
 		Email:     r.Form.Get("email"),
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
+	}
+
+	// populate a new form with the post data
+	form := validation.New(r.PostForm)
+	// perform validation
+	form.Required("first", "last", "phone", "email")
+	form.MinLength("first", 2)
+	// check for validation errors
+	if !form.Valid() {
+		data := make(map[string]interface{})
+		data["contact"] = contact
+		render.Template(w, r, "/contacts.new.gohtml", &models.TemplateData{
+			Form: form,
+			Data: data,
+		})
+		return
 	}
 
 	_, err := repository.InsertContact(contact)
