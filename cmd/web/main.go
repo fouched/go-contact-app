@@ -4,11 +4,9 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/alexedwards/scs/v2"
-	"github.com/fouched/go-contact-app/internal/apix"
 	"github.com/fouched/go-contact-app/internal/config"
 	"github.com/fouched/go-contact-app/internal/handlers"
 	"github.com/fouched/go-contact-app/internal/render"
-	"github.com/fouched/go-contact-app/internal/renderx"
 	"github.com/fouched/go-contact-app/internal/repository"
 	_ "github.com/jackc/pgx/v5"
 	_ "github.com/jackc/pgx/v5/pgconn"
@@ -61,15 +59,9 @@ func run() (*sql.DB, error) {
 	app.Session = session
 	app.InProduction = false
 
-	// normal page handling
 	hc := handlers.NewConfig(&app, dbPool)
 	handlers.NewHandlers(hc)
 	render.NewRenderer(&app)
-
-	// snippets snippet handling
-	hx := apix.NewConfig(&app, dbPool)
-	apix.NewHandlers(hx)
-	renderx.NewRenderer(&app)
 
 	return dbPool, nil
 }

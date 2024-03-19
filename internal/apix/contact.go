@@ -3,7 +3,7 @@ package apix
 import (
 	"fmt"
 	"github.com/fouched/go-contact-app/internal/models"
-	"github.com/fouched/go-contact-app/internal/renderx"
+	"github.com/fouched/go-contact-app/internal/render"
 	"github.com/fouched/go-contact-app/internal/repository"
 	"net/http"
 )
@@ -24,7 +24,7 @@ func (m *HtmxApiConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["contacts"] = contacts
 
-	renderx.Template(w, r, "/contacts.results.gohtmx", &models.TemplateData{
+	render.TemplateSnippet(w, r, "/contacts.results.gohtml", &models.TemplateData{
 		Data: data,
 	})
 }

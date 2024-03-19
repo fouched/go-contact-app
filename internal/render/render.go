@@ -9,6 +9,7 @@ import (
 )
 
 var pathToTemplates = "./templates"
+var pathToTemplateSnippet = "./templates/snippets"
 var app *config.AppConfig
 
 func NewRenderer(a *config.AppConfig) {
@@ -26,6 +27,15 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.Te
 		return
 	}
 
+}
+
+func TemplateSnippet(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) {
+	parsedTemplate, _ := template.ParseFiles(pathToTemplateSnippet + tmpl)
+	err := parsedTemplate.Execute(w, td)
+	if err != nil {
+		fmt.Println("Error parsing template", err)
+		return
+	}
 }
 
 func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
