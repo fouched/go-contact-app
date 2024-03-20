@@ -71,7 +71,7 @@ func parseForm(r *http.Request) models.Contact {
 	return contact
 }
 
-// isValidContact validates the form and renders the template if not valid
+// isValidContact validates the form
 func isValidContact(r *http.Request) validation.Form {
 
 	// populate a new form with the post data
