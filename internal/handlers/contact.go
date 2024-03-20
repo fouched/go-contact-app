@@ -43,6 +43,8 @@ func (m *HandlerConfig) ContactsNew(w http.ResponseWriter, r *http.Request) {
 	form := validation.New(r.PostForm)
 	// perform validation
 	form.Required("first", "last", "phone", "email")
+	form.IsEmail("email")
+	form.MinLength("first", 2)
 	form.MinLength("first", 2)
 	// check for validation errors
 	if !form.Valid() {
