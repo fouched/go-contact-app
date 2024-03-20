@@ -9,7 +9,6 @@ import (
 	"github.com/go-chi/chi/v5"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 func (m *HandlerConfig) ContactsNewGet(w http.ResponseWriter, r *http.Request) {
@@ -34,16 +33,20 @@ func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	contact := models.Contact{
-		First:     r.Form.Get("first"),
-		Last:      r.Form.Get("last"),
-		Phone:     r.Form.Get("phone"),
-		Email:     r.Form.Get("email"),
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
+	contact := parseForm(r)
+	form := isValidContact(r)
 
-	if !isValidContact(w, r, contact) {
+	if !form.Valid() {
+		data := make(map[string]interface{})
+		data["contact"] = contact
+		t := make(map[string]string)
+		t["title"] = "Add"
+		t["action"] = "/contacts/new"
+		render.Template(w, r, "/contacts.upsert.gohtml", &models.TemplateData{
+			Form:      &form,
+			Data:      data,
+			StringMap: t,
+		})
 		return
 	}
 
@@ -58,8 +61,19 @@ func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) 
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
 }
 
+func parseForm(r *http.Request) models.Contact {
+	contact := models.Contact{
+		First: r.Form.Get("first"),
+		Last:  r.Form.Get("last"),
+		Phone: r.Form.Get("phone"),
+		Email: r.Form.Get("email"),
+	}
+	return contact
+}
+
 // isValidContact validates the form and renders the template if not valid
-func isValidContact(w http.ResponseWriter, r *http.Request, contact models.Contact) bool {
+func isValidContact(r *http.Request) validation.Form {
+
 	// populate a new form with the post data
 	form := validation.New(r.PostForm)
 	// perform validation
@@ -67,21 +81,8 @@ func isValidContact(w http.ResponseWriter, r *http.Request, contact models.Conta
 	form.IsEmail("email")
 	form.MinLength("first", 2)
 	form.MinLength("first", 2)
-	// check for validation errors
-	if !form.Valid() {
-		data := make(map[string]interface{})
-		data["contact"] = contact
-		t := make(map[string]string)
-		t["title"] = "Add"
-		t["action"] = "/contacts/new"
-		render.Template(w, r, "/contacts.upsert.gohtml", &models.TemplateData{
-			Form:      form,
-			Data:      data,
-			StringMap: t,
-		})
-		return false
-	}
-	return true
+
+	return *form
 }
 
 // ContactsList displays contacts
@@ -144,7 +145,6 @@ func (m *HandlerConfig) ContactsEditGet(w http.ResponseWriter, r *http.Request) 
 }
 
 func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request) {
-
 	id := chi.URLParam(r, "id")
 	contactId, err := strconv.Atoi(id)
 	if err != nil {
@@ -158,19 +158,24 @@ func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	contact := models.Contact{
-		ID:        contactId,
-		First:     r.Form.Get("first"),
-		Last:      r.Form.Get("last"),
-		Phone:     r.Form.Get("phone"),
-		Email:     r.Form.Get("email"),
-		UpdatedAt: time.Now(),
-	}
+	contact := parseForm(r)
+	form := isValidContact(r)
 
-	if !isValidContact(w, r, contact) {
+	if !form.Valid() {
+		data := make(map[string]interface{})
+		data["contact"] = contact
+		t := make(map[string]string)
+		t["title"] = "Edit"
+		t["action"] = "/contacts/" + id + "/edit"
+		render.Template(w, r, "/contacts.upsert.gohtml", &models.TemplateData{
+			Form:      &form,
+			Data:      data,
+			StringMap: t,
+		})
 		return
 	}
 
+	contact.ID = contactId
 	err = repository.UpdateContactById(contact)
 	if err != nil {
 		fmt.Println("Could not update contact", err)

@@ -42,8 +42,8 @@ func InsertContact(c models.Contact) (int, error) {
 		c.Last,
 		c.Phone,
 		c.Email,
-		c.CreatedAt,
-		c.UpdatedAt,
+		time.Now(),
+		time.Now(),
 	).Scan(&id)
 	fmt.Println(fmt.Sprintf("Inserted contact with id %d", id))
 
