@@ -1,7 +1,7 @@
 {{template "base" .}}
 {{define "content"}}
-    <h2>Add Contact</h2>
-    <form action="/contacts/new" method="post">
+    <h2>{{.StringMap.title}} Contact</h2>
+    <form action="{{.StringMap.action}}" method="post">
         <fieldset>
             <legend>Contact Values</legend>
             <p>

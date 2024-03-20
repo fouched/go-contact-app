@@ -15,15 +15,19 @@ import (
 func (m *HandlerConfig) ContactsNewGet(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["contact"] = models.Contact{}
+	t := make(map[string]string)
+	t["title"] = "Add"
+	t["action"] = "/contacts/new"
 
-	render.Template(w, r, "/contacts.new.gohtml", &models.TemplateData{
-		Form: validation.New(nil),
-		Data: data,
+	render.Template(w, r, "/contacts.upsert.gohtml", &models.TemplateData{
+		Form:      validation.New(nil),
+		Data:      data,
+		StringMap: t,
 	})
 }
 
-// ContactsNew persists a contact and redirects to the list page
-func (m *HandlerConfig) ContactsNew(w http.ResponseWriter, r *http.Request) {
+// ContactsNewPost persists a contact and redirects to the list page
+func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) {
 	pe := r.ParseForm()
 	if pe != nil {
 		fmt.Println("Cannot parse form", pe)
@@ -39,21 +43,7 @@ func (m *HandlerConfig) ContactsNew(w http.ResponseWriter, r *http.Request) {
 		UpdatedAt: time.Now(),
 	}
 
-	// populate a new form with the post data
-	form := validation.New(r.PostForm)
-	// perform validation
-	form.Required("first", "last", "phone", "email")
-	form.IsEmail("email")
-	form.MinLength("first", 2)
-	form.MinLength("first", 2)
-	// check for validation errors
-	if !form.Valid() {
-		data := make(map[string]interface{})
-		data["contact"] = contact
-		render.Template(w, r, "/contacts.new.gohtml", &models.TemplateData{
-			Form: form,
-			Data: data,
-		})
+	if !isValidContact(w, r, contact) {
 		return
 	}
 
@@ -66,6 +56,32 @@ func (m *HandlerConfig) ContactsNew(w http.ResponseWriter, r *http.Request) {
 	m.App.Session.Put(r.Context(), "success", "Contact created")
 
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
+}
+
+// isValidContact validates the form and renders the template if not valid
+func isValidContact(w http.ResponseWriter, r *http.Request, contact models.Contact) bool {
+	// populate a new form with the post data
+	form := validation.New(r.PostForm)
+	// perform validation
+	form.Required("first", "last", "phone", "email")
+	form.IsEmail("email")
+	form.MinLength("first", 2)
+	form.MinLength("first", 2)
+	// check for validation errors
+	if !form.Valid() {
+		data := make(map[string]interface{})
+		data["contact"] = contact
+		t := make(map[string]string)
+		t["title"] = "Add"
+		t["action"] = "/contacts/new"
+		render.Template(w, r, "/contacts.upsert.gohtml", &models.TemplateData{
+			Form:      form,
+			Data:      data,
+			StringMap: t,
+		})
+		return false
+	}
+	return true
 }
 
 // ContactsList displays contacts
@@ -117,8 +133,13 @@ func (m *HandlerConfig) ContactsEditGet(w http.ResponseWriter, r *http.Request) 
 
 	data := make(map[string]interface{})
 	data["contact"] = contact
-	render.Template(w, r, "/contacts.edit.gohtml", &models.TemplateData{
-		Data: data,
+	t := make(map[string]string)
+	t["title"] = "Edit"
+	t["action"] = "/contacts/" + id + "/edit"
+	render.Template(w, r, "/contacts.upsert.gohtml", &models.TemplateData{
+		Form:      validation.New(nil),
+		Data:      data,
+		StringMap: t,
 	})
 }
 
@@ -138,11 +159,16 @@ func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request)
 	}
 
 	contact := models.Contact{
-		ID:    contactId,
-		First: r.Form.Get("first"),
-		Last:  r.Form.Get("last"),
-		Phone: r.Form.Get("phone"),
-		Email: r.Form.Get("email"),
+		ID:        contactId,
+		First:     r.Form.Get("first"),
+		Last:      r.Form.Get("last"),
+		Phone:     r.Form.Get("phone"),
+		Email:     r.Form.Get("email"),
+		UpdatedAt: time.Now(),
+	}
+
+	if !isValidContact(w, r, contact) {
+		return
 	}
 
 	err = repository.UpdateContactById(contact)
