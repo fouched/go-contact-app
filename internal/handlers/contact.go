@@ -26,7 +26,7 @@ func (m *HandlerConfig) ContactsNewGet(w http.ResponseWriter, r *http.Request) {
 func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) {
 
 	contact := parseContactForm(r)
-	form := isValidContact(r)
+	form := isValidContact(r, 0)
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
@@ -130,7 +130,7 @@ func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request)
 	}
 
 	contact := parseContactForm(r)
-	form := isValidContact(r)
+	form := isValidContact(r, contactId)
 
 	if !form.Valid() {
 		data := make(map[string]interface{})
@@ -191,7 +191,7 @@ func parseContactForm(r *http.Request) models.Contact {
 }
 
 // isValidContact validates the form
-func isValidContact(r *http.Request) validation.Form {
+func isValidContact(r *http.Request, id int) validation.Form {
 
 	// populate a new form with the post data
 	form := validation.New(r.PostForm)
@@ -200,6 +200,16 @@ func isValidContact(r *http.Request) validation.Form {
 	form.IsEmail("email")
 	form.MinLength("first", 2)
 	form.MinLength("first", 2)
+
+	// also check that email is unique
+	emailExists, err := repository.EmailExists(r.Form.Get("email"), id)
+	if err != nil {
+		fmt.Println("Error checking email", err)
+	}
+
+	if emailExists {
+		form.Errors.Add("email", "Email already taken")
+	}
 
 	return *form
 }

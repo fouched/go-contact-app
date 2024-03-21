@@ -58,6 +58,16 @@ func SelectContactById(id int) (models.Contact, error) {
 	return c, err
 }
 
+func EmailExists(email string, id int) (bool, error) {
+	rows, err := db.Query("SELECT id FROM contacts WHERE id <> $1 AND UPPER(email) = UPPER($2)", id, email)
+	if err != nil {
+		return false, err
+	}
+	defer rows.Close()
+
+	return rows.Next(), nil
+}
+
 func UpdateContactById(contact models.Contact) error {
 	stmt := `UPDATE contacts SET 
                     first = $2, 
