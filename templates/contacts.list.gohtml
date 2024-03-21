@@ -1,10 +1,10 @@
 {{template "base" .}}
 {{define "content"}}
     <h2>Contacts Page</h2>
-    <form hx-post="/apix/contacts" hx-target="#contactResults" hx-swap="innerHTML" hx-trigger="load">
+    <form hx-post="/contacts" hx-target="#contactResults" hx-swap="innerHTML" hx-trigger="load">
         <label for="q">Search Term</label>
         <input id="q" type="search" name="q" value="{{ .StringMap.q}}"/>
-        <button hx-post="/apix/contacts" hx-target="#contactResults" hx-swap="innerHTML">Search</button>
+        <button hx-post="/contacts" hx-target="#contactResults" hx-swap="innerHTML">Search</button>
         <br><br>
         <table>
             <thead>

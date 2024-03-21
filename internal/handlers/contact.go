@@ -14,14 +14,11 @@ import (
 func (m *HandlerConfig) ContactsNewGet(w http.ResponseWriter, r *http.Request) {
 	data := make(map[string]interface{})
 	data["contact"] = models.Contact{}
-	t := make(map[string]string)
-	t["title"] = "Add"
-	t["action"] = "/contacts/new"
 
 	render.Template(w, r, "/contacts.upsert.gohtml", &models.TemplateData{
 		Form:      validation.New(nil),
 		Data:      data,
-		StringMap: t,
+		StringMap: MakeUpsertMap("Add", "/contacts/new"),
 	})
 }
 
@@ -39,13 +36,10 @@ func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) 
 	if !form.Valid() {
 		data := make(map[string]interface{})
 		data["contact"] = contact
-		t := make(map[string]string)
-		t["title"] = "Add"
-		t["action"] = "/contacts/new"
 		render.Template(w, r, "/contacts.upsert.gohtml", &models.TemplateData{
 			Form:      &form,
 			Data:      data,
-			StringMap: t,
+			StringMap: MakeUpsertMap("Add", "/contacts/new"),
 		})
 		return
 	}
@@ -85,8 +79,8 @@ func isValidContact(r *http.Request) validation.Form {
 	return *form
 }
 
-// ContactsList displays contacts
-func (m *HandlerConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
+// ContactsListGet displays contacts
+func (m *HandlerConfig) ContactsListGet(w http.ResponseWriter, r *http.Request) {
 
 	pe := r.ParseForm()
 	if pe != nil {
@@ -97,7 +91,28 @@ func (m *HandlerConfig) ContactsList(w http.ResponseWriter, r *http.Request) {
 	render.Template(w, r, "/contacts.list.gohtml", &models.TemplateData{})
 }
 
-func (m *HandlerConfig) ContactsView(w http.ResponseWriter, r *http.Request) {
+func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request) {
+
+	pe := r.ParseForm()
+	if pe != nil {
+		fmt.Println("Cannot parse form", pe)
+		return
+	}
+
+	contacts, err := repository.SelectContacts(r.Form.Get("q"))
+	if err != nil {
+		fmt.Println("DB error, cannot query contacts", err)
+	}
+
+	data := make(map[string]interface{})
+	data["contacts"] = contacts
+
+	render.TemplateSnippet(w, r, "/contacts.results.gohtml", &models.TemplateData{
+		Data: data,
+	})
+}
+
+func (m *HandlerConfig) ContactsViewGet(w http.ResponseWriter, r *http.Request) {
 
 	id := chi.URLParam(r, "id")
 	contactId, err := strconv.Atoi(id)
@@ -134,13 +149,10 @@ func (m *HandlerConfig) ContactsEditGet(w http.ResponseWriter, r *http.Request) 
 
 	data := make(map[string]interface{})
 	data["contact"] = contact
-	t := make(map[string]string)
-	t["title"] = "Edit"
-	t["action"] = "/contacts/" + id + "/edit"
 	render.Template(w, r, "/contacts.upsert.gohtml", &models.TemplateData{
 		Form:      validation.New(nil),
 		Data:      data,
-		StringMap: t,
+		StringMap: MakeUpsertMap("Edit", "/contacts/"+id+"/edit"),
 	})
 }
 
@@ -164,13 +176,10 @@ func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request)
 	if !form.Valid() {
 		data := make(map[string]interface{})
 		data["contact"] = contact
-		t := make(map[string]string)
-		t["title"] = "Edit"
-		t["action"] = "/contacts/" + id + "/edit"
 		render.Template(w, r, "/contacts.upsert.gohtml", &models.TemplateData{
 			Form:      &form,
 			Data:      data,
-			StringMap: t,
+			StringMap: MakeUpsertMap("Edit", "/contacts/"+id+"/edit"),
 		})
 		return
 	}

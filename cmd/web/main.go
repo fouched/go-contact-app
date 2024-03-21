@@ -59,7 +59,7 @@ func run() (*sql.DB, error) {
 	app.Session = session
 	app.InProduction = false
 
-	hc := handlers.NewConfig(&app, dbPool)
+	hc := handlers.NewConfig(&app)
 	handlers.NewHandlers(hc)
 	render.NewRenderer(&app)
 

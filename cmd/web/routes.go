@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/fouched/go-contact-app/internal/apix"
 	"github.com/fouched/go-contact-app/internal/handlers"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -19,18 +18,15 @@ func routes() http.Handler {
 	mux.Get("/settings", handlers.Instance.Settings)
 
 	mux.Route("/contacts", func(r chi.Router) {
-		r.Get("/", handlers.Instance.ContactsList)
+		r.Get("/", handlers.Instance.ContactsListGet)
+		r.Post("/", handlers.Instance.ContactsListPost)
 		r.Get("/new", handlers.Instance.ContactsNewGet)
 		r.Post("/new", handlers.Instance.ContactsNewPost)
-		r.Get("/{id}", handlers.Instance.ContactsView)
+		r.Get("/{id}", handlers.Instance.ContactsViewGet)
 		r.Get("/{id}/edit", handlers.Instance.ContactsEditGet)
 		r.Post("/{id}/edit", handlers.Instance.ContactsEditPost)
 		r.Delete("/{id}/delete", handlers.Instance.ContactsDelete)
 	})
-
-	mux.Get("/playground", handlers.Instance.PlaygroundGet)
-
-	mux.Post("/apix/contacts", apix.Instance.ContactsList)
 
 	fileServer := http.FileServer(http.Dir("./static/"))
 	mux.Handle("/static/*", http.StripPrefix("/static", fileServer))
