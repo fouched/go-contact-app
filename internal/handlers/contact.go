@@ -7,6 +7,7 @@ import (
 	"github.com/fouched/go-contact-app/internal/repository"
 	"github.com/fouched/go-contact-app/internal/validation"
 	"github.com/go-chi/chi/v5"
+	"io"
 	"net/http"
 	"strconv"
 )
@@ -154,6 +155,32 @@ func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request)
 	http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
 }
 
+func (m *HandlerConfig) ContactsEmailValidation(w http.ResponseWriter, r *http.Request) {
+
+	id := chi.URLParam(r, "id")
+	contactId, err := strconv.Atoi(id)
+	if err != nil {
+		fmt.Println("Contact ID not an Integer", err)
+		return
+	}
+
+	pe := r.ParseForm()
+	if pe != nil {
+		fmt.Println("Cannot parse form", pe)
+		return
+	}
+
+	emailExists, err := repository.EmailExists(r.Form.Get("email"), contactId)
+	if err != nil {
+		fmt.Println("Error checking email", err)
+		return
+	}
+
+	if emailExists {
+		_, _ = io.WriteString(w, "Email already taken!")
+	}
+}
+
 func (m *HandlerConfig) ContactsDelete(w http.ResponseWriter, r *http.Request) {
 	id := chi.URLParam(r, "id")
 	contactId, err := strconv.Atoi(id)
@@ -199,17 +226,7 @@ func isValidContact(r *http.Request, id int) validation.Form {
 	form.Required("first", "last", "phone", "email")
 	form.IsEmail("email")
 	form.MinLength("first", 2)
-	form.MinLength("first", 2)
-
-	// also check that email is unique
-	emailExists, err := repository.EmailExists(r.Form.Get("email"), id)
-	if err != nil {
-		fmt.Println("Error checking email", err)
-	}
-
-	if emailExists {
-		form.Errors.Add("email", "Email already taken")
-	}
+	form.MinLength("last", 2)
 
 	return *form
 }

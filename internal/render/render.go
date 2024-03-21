@@ -30,6 +30,7 @@ func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.Te
 }
 
 func TemplateSnippet(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) {
+
 	parsedTemplate, _ := template.ParseFiles(pathToTemplateSnippet + tmpl)
 	err := parsedTemplate.Execute(w, td)
 	if err != nil {
@@ -39,6 +40,7 @@ func TemplateSnippet(w http.ResponseWriter, r *http.Request, tmpl string, td *mo
 }
 
 func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+
 	td.Success = app.Session.PopString(r.Context(), "success")
 	td.Warning = app.Session.PopString(r.Context(), "warning")
 	td.Error = app.Session.PopString(r.Context(), "error")

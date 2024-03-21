@@ -6,10 +6,12 @@
             <legend>Contact Values</legend>
             <p>
                 <label for="email">Email</label>
-                <input name="email" id="email" type="email" placeholder="Email" value="{{ .Data.contact.Email }}">
-                {{with .Form.Errors.Get "email"}}
-                <span class="error">{{.}}</span>
-                {{end}}
+                <input name="email" id="email" type="email"
+                       hx-get="/contacts/{{.Data.contact.ID}}/email"
+                       hx-target="next .error"
+                       hx-trigger="change, keyup delay:200ms changed"
+                       placeholder="Email" value="{{ .Data.contact.Email }}">
+                <span class="error">{{with .Form.Errors.Get "email"}} {{.}} {{end}}</span>
             </p>
             <p>
                 <label for="first">First Name</label>
