@@ -35,6 +35,15 @@
             <button>Save</button>
         </fieldset>
     </form>
+    {{if gt .Data.contact.ID 0}}
+    <br>
+    <button
+            hx-delete="/contacts/{{.Data.contact.ID}}"
+            hx-target="body"
+            hx-push-url="true"
+            hx-confirm="Are you sure?"
+    >Delete Contact</button>
+    {{end}}
     <p><a href="/contacts">Back</a></p>
 {{end}}
 

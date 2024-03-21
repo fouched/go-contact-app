@@ -25,7 +25,7 @@ func routes() http.Handler {
 		r.Get("/{id}", handlers.Instance.ContactsViewGet)
 		r.Get("/{id}/edit", handlers.Instance.ContactsEditGet)
 		r.Post("/{id}/edit", handlers.Instance.ContactsEditPost)
-		r.Delete("/{id}/delete", handlers.Instance.ContactsDelete)
+		r.Delete("/{id}", handlers.Instance.ContactsDelete)
 	})
 
 	fileServer := http.FileServer(http.Dir("./static/"))
