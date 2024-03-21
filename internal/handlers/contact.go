@@ -55,30 +55,6 @@ func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) 
 	http.Redirect(w, r, "/contacts", http.StatusSeeOther)
 }
 
-func parseForm(r *http.Request) models.Contact {
-	contact := models.Contact{
-		First: r.Form.Get("first"),
-		Last:  r.Form.Get("last"),
-		Phone: r.Form.Get("phone"),
-		Email: r.Form.Get("email"),
-	}
-	return contact
-}
-
-// isValidContact validates the form
-func isValidContact(r *http.Request) validation.Form {
-
-	// populate a new form with the post data
-	form := validation.New(r.PostForm)
-	// perform validation
-	form.Required("first", "last", "phone", "email")
-	form.IsEmail("email")
-	form.MinLength("first", 2)
-	form.MinLength("first", 2)
-
-	return *form
-}
-
 // ContactsListGet displays contacts
 func (m *HandlerConfig) ContactsListGet(w http.ResponseWriter, r *http.Request) {
 
@@ -211,4 +187,28 @@ func (m *HandlerConfig) ContactsDelete(w http.ResponseWriter, r *http.Request) {
 
 	m.App.Session.Put(r.Context(), "success", "Contact deleted")
 	http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
+}
+
+func parseForm(r *http.Request) models.Contact {
+	contact := models.Contact{
+		First: r.Form.Get("first"),
+		Last:  r.Form.Get("last"),
+		Phone: r.Form.Get("phone"),
+		Email: r.Form.Get("email"),
+	}
+	return contact
+}
+
+// isValidContact validates the form
+func isValidContact(r *http.Request) validation.Form {
+
+	// populate a new form with the post data
+	form := validation.New(r.PostForm)
+	// perform validation
+	form.Required("first", "last", "phone", "email")
+	form.IsEmail("email")
+	form.MinLength("first", 2)
+	form.MinLength("first", 2)
+
+	return *form
 }
