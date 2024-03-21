@@ -7,7 +7,7 @@ import (
 	"github.com/fouched/go-contact-app/internal/config"
 	"github.com/fouched/go-contact-app/internal/handlers"
 	"github.com/fouched/go-contact-app/internal/render"
-	"github.com/fouched/go-contact-app/internal/repository"
+	"github.com/fouched/go-contact-app/internal/repo"
 	_ "github.com/jackc/pgx/v5"
 	_ "github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
@@ -45,7 +45,7 @@ func main() {
 }
 
 func run() (*sql.DB, error) {
-	dbPool, err := repository.CreateDbPool(dbString)
+	dbPool, err := repo.CreateDbPool(dbString)
 	if err != nil {
 		log.Fatal("Cannot connect to database! Dying argh...")
 	}

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/fouched/go-contact-app/internal/models"
 	"github.com/fouched/go-contact-app/internal/render"
-	"github.com/fouched/go-contact-app/internal/repository"
+	"github.com/fouched/go-contact-app/internal/repo"
 	"github.com/fouched/go-contact-app/internal/validation"
 	"github.com/go-chi/chi/v5"
 	"io"
@@ -40,7 +40,7 @@ func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	_, err := repository.InsertContact(contact)
+	_, err := repo.InsertContact(contact)
 
 	if err != nil {
 		fmt.Println("DB error, cannot insert contact", err)
@@ -64,7 +64,7 @@ func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request)
 		fmt.Println("Cannot parse form", err)
 	}
 
-	contacts, err := repository.SelectContacts(r.Form.Get("q"))
+	contacts, err := repo.SelectContacts(r.Form.Get("q"))
 	if err != nil {
 		fmt.Println("DB error, cannot query contacts", err)
 	}
@@ -86,7 +86,7 @@ func (m *HandlerConfig) ContactsViewGet(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	contact, err := repository.SelectContactById(contactId)
+	contact, err := repo.SelectContactById(contactId)
 	if err != nil {
 		fmt.Println("DB error, cannot query contacts", err)
 	}
@@ -107,7 +107,7 @@ func (m *HandlerConfig) ContactsEditGet(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	contact, err := repository.SelectContactById(contactId)
+	contact, err := repo.SelectContactById(contactId)
 	if err != nil {
 		fmt.Println("DB error, cannot query contacts", err)
 	}
@@ -145,7 +145,7 @@ func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request)
 	}
 
 	contact.ID = contactId
-	err = repository.UpdateContactById(contact)
+	err = repo.UpdateContactById(contact)
 	if err != nil {
 		fmt.Println("Could not update contact", err)
 		return
@@ -170,7 +170,7 @@ func (m *HandlerConfig) ContactsEmailValidation(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	emailExists, err := repository.EmailExists(r.Form.Get("email"), contactId)
+	emailExists, err := repo.EmailExists(r.Form.Get("email"), contactId)
 	if err != nil {
 		fmt.Println("Error checking email", err)
 		return
@@ -189,7 +189,7 @@ func (m *HandlerConfig) ContactsDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = repository.DeleteContactById(contactId)
+	err = repo.DeleteContactById(contactId)
 	if err != nil {
 		fmt.Println("Could not delete contact", err)
 		return
