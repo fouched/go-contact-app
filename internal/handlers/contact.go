@@ -24,13 +24,8 @@ func (m *HandlerConfig) ContactsNewGet(w http.ResponseWriter, r *http.Request) {
 
 // ContactsNewPost persists a contact and redirects to the list page
 func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) {
-	pe := r.ParseForm()
-	if pe != nil {
-		fmt.Println("Cannot parse form", pe)
-		return
-	}
 
-	contact := parseForm(r)
+	contact := parseContactForm(r)
 	form := isValidContact(r)
 
 	if !form.Valid() {
@@ -58,22 +53,12 @@ func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) 
 // ContactsListGet displays contacts
 func (m *HandlerConfig) ContactsListGet(w http.ResponseWriter, r *http.Request) {
 
-	pe := r.ParseForm()
-	if pe != nil {
-		fmt.Println("Cannot parse form", pe)
-		return
-	}
-
 	render.Template(w, r, "/contacts.list.gohtml", &models.TemplateData{})
 }
 
 func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request) {
 
-	pe := r.ParseForm()
-	if pe != nil {
-		fmt.Println("Cannot parse form", pe)
-		return
-	}
+	parseContactForm(r)
 
 	contacts, err := repository.SelectContacts(r.Form.Get("q"))
 	if err != nil {
@@ -133,6 +118,7 @@ func (m *HandlerConfig) ContactsEditGet(w http.ResponseWriter, r *http.Request) 
 }
 
 func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request) {
+
 	id := chi.URLParam(r, "id")
 	contactId, err := strconv.Atoi(id)
 	if err != nil {
@@ -140,13 +126,7 @@ func (m *HandlerConfig) ContactsEditPost(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	pe := r.ParseForm()
-	if pe != nil {
-		fmt.Println("Cannot parse form", pe)
-		return
-	}
-
-	contact := parseForm(r)
+	contact := parseContactForm(r)
 	form := isValidContact(r)
 
 	if !form.Valid() {
@@ -189,7 +169,15 @@ func (m *HandlerConfig) ContactsDelete(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
 }
 
-func parseForm(r *http.Request) models.Contact {
+// parseContactForm creates an instance of the Contact struct
+func parseContactForm(r *http.Request) models.Contact {
+
+	pe := r.ParseForm()
+	if pe != nil {
+		fmt.Println("Cannot parse form", pe)
+		return models.Contact{}
+	}
+
 	contact := models.Contact{
 		First: r.Form.Get("first"),
 		Last:  r.Form.Get("last"),
