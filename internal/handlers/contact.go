@@ -58,7 +58,10 @@ func (m *HandlerConfig) ContactsListGet(w http.ResponseWriter, r *http.Request) 
 
 func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request) {
 
-	parseContactForm(r)
+	err := r.ParseForm()
+	if err != nil {
+		fmt.Println("Cannot parse form", err)
+	}
 
 	contacts, err := repository.SelectContacts(r.Form.Get("q"))
 	if err != nil {
