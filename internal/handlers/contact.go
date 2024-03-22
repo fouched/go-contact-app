@@ -53,11 +53,17 @@ func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) 
 
 // ContactsListGet displays contacts
 func (m *HandlerConfig) ContactsListGet(w http.ResponseWriter, r *http.Request) {
-
-	render.Template(w, r, "/contacts.list.gohtml", &models.TemplateData{})
+	stringMap := make(map[string]string)
+	stringMap["cp"] = "0"
+	stringMap["tp"] = "3"
+	render.Template(w, r, "/contacts.list.gohtml", &models.TemplateData{
+		StringMap: stringMap,
+	})
 }
 
 func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request) {
+
+	pageSize := 1
 
 	err := r.ParseForm()
 	if err != nil {
@@ -65,23 +71,37 @@ func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request)
 	}
 
 	q := r.Form.Get("q")
-	p := r.Form.Get("page")
+	cp := r.Form.Get("cp")
+	cpInt, _ := strconv.Atoi(cp)
+	//first := r.Form.Get("first")
+	prev := r.Form.Get("prev")
+	next := r.Form.Get("next")
+	//last := r.Form.Get("last")
 
-	page := 0
-	if p != "" {
-		page, err = strconv.Atoi(p)
+	o := 0
+	if prev != "" {
+		o = (cpInt * pageSize) - 1
+		cpInt = cpInt - 1
+	}
+	if next != "" {
+		o = (cpInt * pageSize) + 1
+		cpInt = cpInt + 1
 	}
 
-	contacts, err := repo.SelectContacts(q, page)
+	contacts, err := repo.SelectContacts(q, o)
 	if err != nil {
 		fmt.Println("DB error, cannot query contacts", err)
 	}
 
 	data := make(map[string]interface{})
 	data["contacts"] = contacts
+	stringMap := make(map[string]string)
+	stringMap["cp"] = strconv.Itoa(cpInt)
+	stringMap["tp"] = "3"
 
 	render.TemplateSnippet(w, r, "/contacts.results.gohtml", &models.TemplateData{
-		Data: data,
+		Data:      data,
+		StringMap: stringMap,
 	})
 }
 

@@ -1,12 +1,48 @@
-{{ range .Data.contacts }}
+<table>
+    <thead>
     <tr>
-        <td>{{ .First }}</td>
-        <td>{{ .Last }}</td>
-        <td>{{ .Phone }}</td>
-        <td>{{ .Email }}</td>
-        <td>
-            <a href="/contacts/{{ .ID }}/edit">Edit</a>
-            <a href="/contacts/{{ .ID }}">View</a>
-        </td>
+        <th colspan="4"></th>
+        <th>
+            <!-- Do not boost links that load a new page -->
+            <a href="/contacts/new" hx-boost="false">Add Contact</a>
+        </th>
     </tr>
-{{ end }}
+    <tr>
+        <th>First</th> <th>Last</th> <th>Phone</th> <th>Email</th> <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{ range .Data.contacts }}
+        <tr>
+            <td>{{ .First }}</td>
+            <td>{{ .Last }}</td>
+            <td>{{ .Phone }}</td>
+            <td>{{ .Email }}</td>
+            <td>
+                <a href="/contacts/{{ .ID }}/edit">Edit</a>
+                <a href="/contacts/{{ .ID }}">View</a>
+            </td>
+        </tr>
+    {{ end }}
+    </tbody>
+</table>
+<input type="hidden" id="cp" name="cp" value="{{ .StringMap.cp}}"/>
+<br>
+<div>
+    <span style="float: left">
+        <button name="prev"
+                hx-post="/contacts"
+                hx-target="#contactResults"
+                hx-swap="innerHTML"
+                value="prev"
+                {{if eq .StringMap.cp "0"}} disabled {{end}}
+        >Previous</button>
+        <button name="next"
+                hx-post="/contacts"
+                hx-target="#contactResults"
+                hx-swap="innerHTML"
+                value="next"
+                {{if eq .StringMap.cp .StringMap.tp}} disabled {{end}}
+        >Next</button>
+    </span>
+</div>

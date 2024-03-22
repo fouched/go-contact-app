@@ -3,37 +3,12 @@
     <h2>Contacts Page</h2>
     <form hx-post="/contacts" hx-target="#contactResults" hx-swap="innerHTML" hx-trigger="load">
         <label for="q">Search Term</label>
-        <input id="q" type="search" name="q" value="{{ .StringMap.q}}"/>
+        <input type="search" id="q" name="q" value="{{ .StringMap.q}}"/>
         <button hx-post="/contacts" hx-target="#contactResults" hx-swap="innerHTML">Search</button>
         <br><br>
-        <table>
-            <thead>
-            <tr>
-                <th colspan="4"></th>
-                <th>
-                    <!-- Do not boost links that load a new page -->
-                    <a href="/contacts/new" hx-boost="false">Add Contact</a>
-                </th>
-            </tr>
-            <tr>
-                <th>First</th> <th>Last</th> <th>Phone</th> <th>Email</th> <th>Action</th>
-            </tr>
-            </thead>
-            <!-- Do not boost dynamic content rendered by form on load-->
-            <tbody id="contactResults" hx-boost="false">
+        <!-- Do not boost dynamic content rendered by form on load-->
+        <div id="contactResults" hx-boost="false">
             <!-- HTMX snippet will load here -->
-            </tbody>
-        </table>
-        <br>
-        <div>
-            <span style="float: left">
-                <button hx-post="/contacts" hx-target="#contactResults" hx-swap="innerHTML">Previous</button>
-                <button hx-post="/contacts" hx-target="#contactResults" hx-swap="innerHTML">Next</button>
-            </span>
         </div>
     </form>
-    <div>
-    </div>
-
-
 {{end}}
