@@ -2,4 +2,7 @@
     color: #e1715b;
 }
 
-
+table {
+    width: 650px;
+    border-collapse: collapse;
+}

@@ -64,7 +64,15 @@ func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request)
 		fmt.Println("Cannot parse form", err)
 	}
 
-	contacts, err := repo.SelectContacts(r.Form.Get("q"))
+	q := r.Form.Get("q")
+	p := r.Form.Get("page")
+
+	page := 0
+	if p != "" {
+		page, err = strconv.Atoi(p)
+	}
+
+	contacts, err := repo.SelectContacts(q, page)
 	if err != nil {
 		fmt.Println("DB error, cannot query contacts", err)
 	}

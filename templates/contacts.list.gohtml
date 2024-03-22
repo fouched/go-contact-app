@@ -9,6 +9,13 @@
         <table>
             <thead>
             <tr>
+                <th colspan="4"></th>
+                <th>
+                    <!-- Do not boost links that load a new page -->
+                    <a href="/contacts/new" hx-boost="false">Add Contact</a>
+                </th>
+            </tr>
+            <tr>
                 <th>First</th> <th>Last</th> <th>Phone</th> <th>Email</th> <th>Action</th>
             </tr>
             </thead>
@@ -17,20 +24,15 @@
             <!-- HTMX snippet will load here -->
             </tbody>
         </table>
-        <p>
-            <!-- Do not boost links that load a new page -->
-            <a href="/contacts/new" hx-boost="false">Add Contact</a>
-        </p>
+        <br>
+        <div>
+            <span style="float: left">
+                <button hx-post="/contacts" hx-target="#contactResults" hx-swap="innerHTML">Previous</button>
+                <button hx-post="/contacts" hx-target="#contactResults" hx-swap="innerHTML">Next</button>
+            </span>
+        </div>
     </form>
     <div>
-    <span style="float: right">
-        {{ if gt .StringMap.page 1 }}
-          <a href="/contacts?page={{ .StringMap.prevPage }}">Previous</a>
-        {{end}}
-        {{ if eq .StringMap.nextPage 0 }}
-          <a href="/contacts?page={{ .StringMap.nextPage }}">Next</a>
-        {{ end }}
-    </span>
     </div>
 
 

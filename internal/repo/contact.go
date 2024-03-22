@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-func SelectContacts(q string) ([]models.Contact, error) {
+func SelectContacts(q string, p int) ([]models.Contact, error) {
 	s := "SELECT * FROM contacts c "
 	if q != "" {
 		s += "WHERE UPPER(c.first) LIKE UPPER('%" + q + "%')" +
