@@ -22,4 +22,16 @@
             <a href="/contacts/new" hx-boost="false">Add Contact</a>
         </p>
     </form>
+    <div>
+    <span style="float: right">
+        {{ if gt .StringMap.page 1 }}
+          <a href="/contacts?page={{ .StringMap.prevPage }}">Previous</a>
+        {{end}}
+        {{ if eq .StringMap.nextPage 0 }}
+          <a href="/contacts?page={{ .StringMap.nextPage }}">Next</a>
+        {{ end }}
+    </span>
+    </div>
+
+
 {{end}}
