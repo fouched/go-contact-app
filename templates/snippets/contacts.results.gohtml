@@ -3,8 +3,7 @@
     <tr>
         <th colspan="4"></th>
         <th>
-            <!-- Do not boost links that load a new page -->
-            <a href="/contacts/new" hx-boost="false">Add Contact</a>
+            <button hx-get="/contacts/new" hx-target="body" hx-push-url="true">Add Contact</button>
         </th>
     </tr>
     <tr>
@@ -18,7 +17,7 @@
             <td>{{ .Last }}</td>
             <td>{{ .Phone }}</td>
             <td>{{ .Email }}</td>
-            <td>
+            <td style="text-align: center">
                 <a href="/contacts/{{ .ID }}/edit">Edit</a>
                 <a href="/contacts/{{ .ID }}">View</a>
             </td>
@@ -26,23 +25,36 @@
     {{ end }}
     </tbody>
 </table>
-<input type="hidden" id="cp" name="cp" value="{{ .StringMap.cp}}"/>
+<input type="hidden" id="cp" name="cp" value="{{ .IntMap.cp}}"/>
 <br>
 <div>
     <span style="float: left">
+        <button name="first"
+                hx-post="/contacts"
+                hx-target="#contactResults"
+                hx-swap="innerHTML"
+                value="first"
+        >First</button>
         <button name="prev"
                 hx-post="/contacts"
                 hx-target="#contactResults"
                 hx-swap="innerHTML"
                 value="prev"
-                {{if eq .StringMap.cp "0"}} disabled {{end}}
-        >Previous</button>
+                {{if eq .IntMap.cp 1}} disabled {{end}}
+        >Prev</button>
+        <span>Page {{ .IntMap.cp}} of {{ .IntMap.tp}}</span>
         <button name="next"
                 hx-post="/contacts"
                 hx-target="#contactResults"
                 hx-swap="innerHTML"
                 value="next"
-                {{if eq .StringMap.cp .StringMap.tp}} disabled {{end}}
+                {{if eq .IntMap.cp .IntMap.tp}} disabled {{end}}
         >Next</button>
+        <button name="last"
+                hx-post="/contacts"
+                hx-target="#contactResults"
+                hx-swap="innerHTML"
+                value="last"
+        >Last</button>
     </span>
 </div>

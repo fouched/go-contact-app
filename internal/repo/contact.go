@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func SelectContacts(q string, o int) ([]models.Contact, error) {
+func SelectContacts(q string, o int, ps int) ([]models.Contact, error) {
 
 	s := "SELECT * FROM contacts c "
 	if q != "" {
@@ -15,7 +15,7 @@ func SelectContacts(q string, o int) ([]models.Contact, error) {
 			" OR UPPER(c.last) LIKE UPPER('%" + q + "%') "
 	}
 	s += "ORDER BY c.last, c.first "
-	s += "LIMIT " + strconv.Itoa(pageSize)
+	s += "LIMIT " + strconv.Itoa(ps)
 	s += " OFFSET " + strconv.Itoa(o)
 
 	rows, err := db.Query(s)
@@ -34,6 +34,19 @@ func SelectContacts(q string, o int) ([]models.Contact, error) {
 	}
 
 	return contacts, err
+}
+
+func SelectContactCount(q string) (int, error) {
+
+	var c int
+	s := "SELECT COUNT(c.id) FROM contacts c "
+	if q != "" {
+		s += "WHERE UPPER(c.first) LIKE UPPER('%" + q + "%')" +
+			" OR UPPER(c.last) LIKE UPPER('%" + q + "%') "
+	}
+	err := db.QueryRow(s).Scan(&c)
+
+	return c, err
 }
 
 func InsertContact(c models.Contact) (int, error) {

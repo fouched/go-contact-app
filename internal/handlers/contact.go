@@ -8,6 +8,7 @@ import (
 	"github.com/fouched/go-contact-app/internal/validation"
 	"github.com/go-chi/chi/v5"
 	"io"
+	"math"
 	"net/http"
 	"strconv"
 )
@@ -53,17 +54,15 @@ func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) 
 
 // ContactsListGet displays contacts
 func (m *HandlerConfig) ContactsListGet(w http.ResponseWriter, r *http.Request) {
-	stringMap := make(map[string]string)
-	stringMap["cp"] = "0"
-	stringMap["tp"] = "3"
+	intMap := make(map[string]int)
+	intMap["cp"] = 1
+	intMap["tp"] = 3
 	render.Template(w, r, "/contacts.list.gohtml", &models.TemplateData{
-		StringMap: stringMap,
+		IntMap: intMap,
 	})
 }
 
 func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request) {
-
-	pageSize := 1
 
 	err := r.ParseForm()
 	if err != nil {
@@ -73,35 +72,49 @@ func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request)
 	q := r.Form.Get("q")
 	cp := r.Form.Get("cp")
 	cpInt, _ := strconv.Atoi(cp)
-	//first := r.Form.Get("first")
+	first := r.Form.Get("first")
+	last := r.Form.Get("last")
 	prev := r.Form.Get("prev")
 	next := r.Form.Get("next")
-	//last := r.Form.Get("last")
 
+	count, _ := repo.SelectContactCount(q)
+
+	pageSize := 3
 	o := 0
-	if prev != "" {
-		o = (cpInt * pageSize) - 1
-		cpInt = cpInt - 1
-	}
-	if next != "" {
-		o = (cpInt * pageSize) + 1
-		cpInt = cpInt + 1
+	pages := math.Ceil(float64(count) / float64(pageSize))
+	tp := int(pages)
+
+	if cpInt == 0 {
+		cpInt = 1
 	}
 
-	contacts, err := repo.SelectContacts(q, o)
+	if first != "" {
+		cpInt = 1
+	} else if last != "" {
+		cpInt = tp
+		o = (cpInt - 1) * pageSize
+	} else if prev != "" {
+		cpInt = cpInt - 1
+		o = (cpInt - 1) * pageSize
+	} else if next != "" {
+		cpInt = cpInt + 1
+		o = (cpInt - 1) * pageSize
+	}
+
+	contacts, err := repo.SelectContacts(q, o, pageSize)
 	if err != nil {
 		fmt.Println("DB error, cannot query contacts", err)
 	}
 
 	data := make(map[string]interface{})
 	data["contacts"] = contacts
-	stringMap := make(map[string]string)
-	stringMap["cp"] = strconv.Itoa(cpInt)
-	stringMap["tp"] = "3"
+	intMap := make(map[string]int)
+	intMap["cp"] = cpInt
+	intMap["tp"] = tp
 
 	render.TemplateSnippet(w, r, "/contacts.results.gohtml", &models.TemplateData{
-		Data:      data,
-		StringMap: stringMap,
+		Data:   data,
+		IntMap: intMap,
 	})
 }
 

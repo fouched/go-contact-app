@@ -7,7 +7,6 @@ import (
 
 // db is the database connection pool
 var db *sql.DB
-var pageSize = 1
 
 func CreateDbPool(dsn string) (*sql.DB, error) {
 	// no error thrown even host or db does not exist

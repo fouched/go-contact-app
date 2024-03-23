@@ -3,6 +3,9 @@
 }
 
 table {
-    width: 650px;
     border-collapse: collapse;
+}
+
+th, td {
+    width: 200px;
 }
