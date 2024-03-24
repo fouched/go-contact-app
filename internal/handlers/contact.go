@@ -108,9 +108,12 @@ func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request)
 	intMap["cp"] = cpInt
 	intMap["tp"] = tp
 
-	//template := "/contacts.results.gohtml"
+	// uncomment the sleep to show that the indicator actually works
+	// in real life responses will be slower...
+	//time.Sleep(500 * time.Millisecond)
+	template := "/contacts.results.gohtml"
 	//template := "/contacts.results.clicktoload.gohtml"
-	template := "/contacts.results.infinitescroll.gohtml"
+	//template := "/contacts.results.infinitescroll.gohtml"
 	render.TemplateSnippet(w, r, template, &models.TemplateData{
 		Data:   data,
 		IntMap: intMap,

@@ -6,3 +6,14 @@ table {
     border-collapse: collapse;
 }
 
+.htmx-indicator{
+    opacity:0;
+    transition: opacity 50ms ease-in;
+}
+
+.htmx-indicator .snippets-request{
+    opacity:1
+}
+.htmx-indicator.snippets-request{
+    opacity:1
+}

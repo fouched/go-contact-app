@@ -1,4 +1,13 @@
 {{template "base" .}}
 {{define "content"}}
     <h2>Settings Page</h2>
+    <label for="q">Search Term</label>
+    <input type="search" id="q" name="q" value=""
+           hx-get="/settings/q"
+           hx-trigger="search, keyup delay:200ms changed"
+           hx-target="#result"
+           hx-push-url="true"
+           hx-indicator="#spinner"/>
+    <img id="spinner" class="htmx-indicator" src="/static/images/spinner.svg" alt="Request In Flight..."/>
 {{end}}
+    <div id="result"></div>
