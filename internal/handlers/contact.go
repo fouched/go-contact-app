@@ -56,7 +56,7 @@ func (m *HandlerConfig) ContactsNewPost(w http.ResponseWriter, r *http.Request) 
 func (m *HandlerConfig) ContactsListGet(w http.ResponseWriter, r *http.Request) {
 	intMap := make(map[string]int)
 	intMap["cp"] = 1
-	intMap["tp"] = 3
+	intMap["tp"], _ = totalPages("")
 	render.Template(w, r, "/contacts.list.gohtml", &models.TemplateData{
 		IntMap: intMap,
 	})
@@ -77,12 +77,8 @@ func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request)
 	prev := r.Form.Get("prev")
 	next := r.Form.Get("next")
 
-	count, _ := repo.SelectContactCount(q)
-
-	pageSize := 3
-	o := 0
-	pages := math.Ceil(float64(count) / float64(pageSize))
-	tp := int(pages)
+	tp, pageSize := totalPages(q)
+	offset := 0
 
 	if cpInt == 0 {
 		cpInt = 1
@@ -92,16 +88,16 @@ func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request)
 		cpInt = 1
 	} else if last != "" {
 		cpInt = tp
-		o = (cpInt - 1) * pageSize
+		offset = (cpInt - 1) * pageSize
 	} else if prev != "" {
 		cpInt = cpInt - 1
-		o = (cpInt - 1) * pageSize
+		offset = (cpInt - 1) * pageSize
 	} else if next != "" {
 		cpInt = cpInt + 1
-		o = (cpInt - 1) * pageSize
+		offset = (cpInt - 1) * pageSize
 	}
 
-	contacts, err := repo.SelectContacts(q, o, pageSize)
+	contacts, err := repo.SelectContacts(q, offset, pageSize)
 	if err != nil {
 		fmt.Println("DB error, cannot query contacts", err)
 	}
@@ -270,4 +266,16 @@ func isValidContact(r *http.Request, id int) validation.Form {
 	form.MinLength("last", 2)
 
 	return *form
+}
+
+func totalPages(q string) (int, int) {
+	pageSize := 3
+	count, err := repo.SelectContactCount(q)
+	if err != nil {
+		fmt.Println("Error getting page count", err.Error())
+		return 0, 0
+	}
+
+	pages := math.Ceil(float64(count) / float64(pageSize))
+	return int(pages), pageSize
 }

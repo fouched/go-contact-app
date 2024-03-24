@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-func SelectContacts(q string, o int, ps int) ([]models.Contact, error) {
+func SelectContacts(q string, offset int, pageSize int) ([]models.Contact, error) {
 
 	s := "SELECT * FROM contacts c "
 	if q != "" {
@@ -15,8 +15,8 @@ func SelectContacts(q string, o int, ps int) ([]models.Contact, error) {
 			" OR UPPER(c.last) LIKE UPPER('%" + q + "%') "
 	}
 	s += "ORDER BY c.last, c.first "
-	s += "LIMIT " + strconv.Itoa(ps)
-	s += " OFFSET " + strconv.Itoa(o)
+	s += "LIMIT " + strconv.Itoa(pageSize)
+	s += " OFFSET " + strconv.Itoa(offset)
 
 	rows, err := db.Query(s)
 	// close the rows when function exists
