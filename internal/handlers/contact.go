@@ -108,7 +108,10 @@ func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request)
 	intMap["cp"] = cpInt
 	intMap["tp"] = tp
 
-	render.TemplateSnippet(w, r, "/contacts.results.gohtml", &models.TemplateData{
+	//template := "/contacts.results.gohtml"
+	//template := "/contacts.results.clicktoload.gohtml"
+	template := "/contacts.results.infinitescroll.gohtml"
+	render.TemplateSnippet(w, r, template, &models.TemplateData{
 		Data:   data,
 		IntMap: intMap,
 	})

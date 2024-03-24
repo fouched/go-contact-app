@@ -23,19 +23,24 @@
             </td>
         </tr>
     {{ end }}
-    <tr>
-        <td colspan="5" style="width: 720px; text-align: center">
-            <button name="next"
-                    value="next"
-                    hx-target="closest tr"
-                    hx-swap="outerHTML"
-                    hx-select="tbody > tr"
-                    hx-post="/contacts"
-                    {{if eq .IntMap.cp .IntMap.tp}} disabled {{end}}
-            >Load More</button>
-            <input type="hidden" id="cp" name="cp" value="{{ .IntMap.cp}}"/>
-        </td>
-    </tr>
+    {{if eq .IntMap.cp .IntMap.tp}}
+        <tr>
+            <td colspan="5" style="width: 720px; text-align: center"><i>All results loaded</i></td>
+        </tr>
+    {{ else }}
+        <tr>
+            <td colspan="5" style="width: 720px; text-align: center">
+                <span hx-target="closest tr"
+                      hx-trigger="revealed"
+                      hx-swap="outerHTML"
+                      hx-select="tbody > tr"
+                      hx-post="/contacts">Loading More...
+                    <input type="hidden" id="next" name="next" value="next"/>
+                    <input type="hidden" id="cp" name="cp" value="{{ .IntMap.cp}}"/>
+                </span>
+            </td>
+        </tr>
+    {{end}}
     </tbody>
 </table>
 <br>
