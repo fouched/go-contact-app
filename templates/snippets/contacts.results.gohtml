@@ -20,6 +20,12 @@
             <td style="text-align: center">
                 <a href="/contacts/{{ .ID }}/edit">Edit</a>
                 <a href="/contacts/{{ .ID }}">View</a>
+                <a href="#"
+                   hx-delete="/contacts/{{ .ID }}"
+                   hx-swap="outerHTML swap:2s"
+                   hx-target="closest tr"
+                   hx-confirm="Are you sure?"
+                >Delete</a>
             </td>
         </tr>
     {{ end }}

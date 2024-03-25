@@ -40,6 +40,7 @@
     {{if gt .Data.contact.ID 0}}
     <br>
     <button
+            id="contact-delete-btn"
             hx-delete="/contacts/{{.Data.contact.ID}}"
             hx-target="body"
             hx-push-url="true"

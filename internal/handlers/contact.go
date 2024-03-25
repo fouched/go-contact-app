@@ -238,8 +238,11 @@ func (m *HandlerConfig) ContactsDelete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	m.App.Session.Put(r.Context(), "success", "Contact deleted")
-	http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
+	if r.Header.Get("HX-Trigger") == "contact-delete-btn" {
+		m.App.Session.Put(r.Context(), "success", "Contact deleted")
+		http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
+	}
+
 }
 
 // parseContactForm creates an instance of the Contact struct
