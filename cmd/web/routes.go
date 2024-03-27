@@ -26,6 +26,7 @@ func routes() http.Handler {
 		r.Get("/{id}", handlers.Instance.ContactsViewGet)
 		r.Get("/{id}/edit", handlers.Instance.ContactsEditGet)
 		r.Post("/{id}/edit", handlers.Instance.ContactsEditPost)
+		r.Post("/delete", handlers.Instance.ContactsDeleteSelected)
 		r.Delete("/{id}", handlers.Instance.ContactsDelete)
 		r.Get("/{id}/email", handlers.Instance.ContactsEmailValidation)
 	})

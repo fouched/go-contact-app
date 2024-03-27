@@ -245,6 +245,28 @@ func (m *HandlerConfig) ContactsDelete(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (m *HandlerConfig) ContactsDeleteSelected(w http.ResponseWriter, r *http.Request) {
+	err := r.ParseForm()
+	if err != nil {
+		fmt.Println("Cannot parse form", err)
+	}
+	contacts := r.Form["selected_contact_ids"]
+
+	for _, cid := range contacts {
+		id, _ := strconv.Atoi(cid)
+		err := repo.DeleteContactById(id)
+		if err != nil {
+			fmt.Println("Could not delete contact", err)
+		} else {
+			m.App.Session.Put(r.Context(), "error", "Contacts could not be deleted")
+			http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
+		}
+	}
+
+	m.App.Session.Put(r.Context(), "success", "Contacts deleted")
+	http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
+}
+
 // parseContactForm creates an instance of the Contact struct
 func parseContactForm(r *http.Request) models.Contact {
 
@@ -278,7 +300,7 @@ func isValidContact(r *http.Request, id int) validation.Form {
 }
 
 func totalPages(q string) (int, int) {
-	pageSize := 3
+	pageSize := 10
 	count, err := repo.SelectContactCount(q)
 	if err != nil {
 		fmt.Println("Error getting page count", err.Error())

@@ -1,18 +1,19 @@
 <table>
     <thead>
     <tr>
-        <th colspan="4"></th>
+        <th colspan="5"></th>
         <th>
             <button hx-get="/contacts/new" hx-target="body" hx-push-url="true">Add Contact</button>
         </th>
     </tr>
     <tr>
-        <th style="width: 120px; text-align: left">First</th> <th style="width: 140px ; text-align: left">Last</th> <th style="width: 120px; text-align: left">Phone</th> <th style="width: 220px">Email</th> <th style="width: 120px">Action</th>
+        <th style="width: 30px"></th><th style="width: 120px; text-align: left">First</th> <th style="width: 140px ; text-align: left">Last</th> <th style="width: 120px; text-align: left">Phone</th> <th style="width: 220px">Email</th> <th style="width: 120px">Action</th>
     </tr>
     </thead>
     <tbody>
     {{ range .Data.contacts }}
         <tr>
+            <td><input type="checkbox" name="selected_contact_ids" value="{{ .ID }}"></td>
             <td>{{ .First }}</td>
             <td>{{ .Last }}</td>
             <td>{{ .Phone }}</td>
@@ -31,6 +32,13 @@
     {{ end }}
     </tbody>
 </table>
+<br>
+<button hx-post="/contacts/delete"
+        hx-confirm="Are you sure you want to delete these contacts?"
+        hx-target="#contactResults">
+    Delete Contacts
+</button>
+<br>
 <input type="hidden" id="cp" name="cp" value="{{ .IntMap.cp}}"/>
 <br>
 <div>
