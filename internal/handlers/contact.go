@@ -57,7 +57,10 @@ func (m *HandlerConfig) ContactsListGet(w http.ResponseWriter, r *http.Request) 
 	intMap := make(map[string]int)
 	intMap["cp"] = 1
 	intMap["tp"], _ = totalPages("")
-	render.Template(w, r, "/contacts.list.gohtml", &models.TemplateData{
+
+	templates := []string{"/contacts.list.gohtml", "/contacts.archive.ui.gohtml"}
+
+	render.MultipleTemplates(w, r, templates, &models.TemplateData{
 		IntMap: intMap,
 	})
 }
@@ -265,6 +268,19 @@ func (m *HandlerConfig) ContactsDeleteSelected(w http.ResponseWriter, r *http.Re
 
 	m.App.Session.Put(r.Context(), "success", "Contacts deleted")
 	http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
+}
+
+func (m *HandlerConfig) ArchivePost(w http.ResponseWriter, r *http.Request) {
+	a := NewArchive()
+	go a.Run()
+	a.Status = "Running"
+
+	aMap := make(map[string]interface{})
+	aMap["Archive"] = a
+	render.TemplateSnippet(w, r, "/contacts.archive.ui.gohtml", &models.TemplateData{
+		Data: aMap,
+	})
+
 }
 
 // parseContactForm creates an instance of the Contact struct

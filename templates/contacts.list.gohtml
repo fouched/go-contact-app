@@ -1,6 +1,9 @@
 {{template "base" .}}
 {{define "content"}}
     <h2>Contacts Page</h2>
+    {{block "archive-ui" .}}
+        archive not defined!
+    {{end}}
     <form hx-post="/contacts" hx-target="#contactResults" hx-swap="innerHTML" hx-trigger="load">
         <label for="q">Search Term</label>
         <input type="search" id="q" name="q" value="{{ .StringMap.q}}"

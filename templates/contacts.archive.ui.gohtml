@@ -1,0 +1,11 @@
+{{define "archive-ui"}}
+<div id="archive-ui"  hx-target="this" hx-swap="outerHTML">
+    {{ if eq .Data.Archive.Status "Running"}}
+        Running...
+    {{ else }}
+        <button hx-post="/contacts/archive">
+            Download Contact Archive
+        </button>
+    {{ end}}
+</div>
+{{end}}

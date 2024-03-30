@@ -16,6 +16,25 @@ func NewRenderer(a *config.AppConfig) {
 	app = a
 }
 
+// MultipleTemplates renders parent and children templates. The parent should be defined first
+func MultipleTemplates(w http.ResponseWriter, r *http.Request, tmpl []string, td *models.TemplateData) {
+
+	td = AddDefaultData(td, r)
+
+	for i, t := range tmpl {
+		tmpl[i] = pathToTemplates + t
+	}
+	tmpl = append(tmpl, pathToTemplates+"/base.layout.gohtml")
+
+	parsedTemplate, _ := template.ParseFiles(tmpl...)
+	err := parsedTemplate.Execute(w, td)
+	if err != nil {
+		fmt.Println("Error parsing template", err)
+		return
+	}
+
+}
+
 func Template(w http.ResponseWriter, r *http.Request, tmpl string, td *models.TemplateData) {
 
 	td = AddDefaultData(td, r)
