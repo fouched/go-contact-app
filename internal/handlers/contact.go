@@ -58,6 +58,19 @@ func (m *HandlerConfig) ContactsListGet(w http.ResponseWriter, r *http.Request) 
 	intMap["cp"] = 1
 	intMap["tp"], _ = totalPages("")
 
+	// create the archive instance
+	//  TODO: prevent re-creation?
+	if ArchiveInstance == nil {
+		fmt.Println("Creating archive instance")
+		a := Archive{
+			Status:   "Waiting",
+			Progress: 0,
+		}
+		NewArchive(&a)
+	} else {
+		fmt.Println("Archive instance already exists")
+	}
+
 	templates := []string{"/contacts.list.gohtml", "/contacts.archive.ui.gohtml"}
 
 	render.MultipleTemplates(w, r, templates, &models.TemplateData{
@@ -270,15 +283,21 @@ func (m *HandlerConfig) ContactsDeleteSelected(w http.ResponseWriter, r *http.Re
 	http.Redirect(w, r, "/contacts/", http.StatusSeeOther)
 }
 
-func (m *HandlerConfig) ArchivePost(w http.ResponseWriter, r *http.Request) {
-	a := NewArchive()
-	go a.Run()
-	a.Status = "Running"
-
-	aMap := make(map[string]interface{})
-	aMap["Archive"] = a
+func (m *HandlerConfig) ArchiveGet(w http.ResponseWriter, r *http.Request) {
+	a := make(map[string]interface{})
+	a["Archive"] = ArchiveInstance
 	render.TemplateSnippet(w, r, "/contacts.archive.ui.gohtml", &models.TemplateData{
-		Data: aMap,
+		Data: a,
+	})
+}
+
+func (m *HandlerConfig) ArchivePost(w http.ResponseWriter, r *http.Request) {
+	go RunArchive()
+
+	a := make(map[string]interface{})
+	a["Archive"] = ArchiveInstance
+	render.TemplateSnippet(w, r, "/contacts.archive.ui.gohtml", &models.TemplateData{
+		Data: a,
 	})
 
 }
