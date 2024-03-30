@@ -7,6 +7,9 @@
                 </div>
             </div>
         </div>
+    {{ else if eq .Data.Archive.Status "Complete"}}
+        Archive Ready!&nbsp;<a hx-boost="false" href="/contacts/archive/file" target="_blank">Click here to download</a>
+        <br>
     {{ else }}
         <button hx-post="/contacts/archive">
             Download Contact Archive

@@ -34,6 +34,7 @@ func RunArchive() string {
 	fmt.Println("Creating Archive 80%")
 	time.Sleep(1 * time.Second)
 	ArchiveInstance.Progress = 100
+	ArchiveInstance.Status = "Complete"
 	fmt.Println("Creating Archive 100%")
 
 	ArchiveInstance.ArchiveFile = "/some/path.csv"

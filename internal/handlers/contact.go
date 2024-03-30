@@ -292,6 +292,8 @@ func (m *HandlerConfig) ArchiveGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *HandlerConfig) ArchivePost(w http.ResponseWriter, r *http.Request) {
+	ArchiveInstance.Progress = 0
+
 	go RunArchive()
 
 	a := make(map[string]interface{})
