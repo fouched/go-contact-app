@@ -13,31 +13,33 @@ type Archive struct {
 	ArchiveFile string
 }
 
-func NewArchive(ai *Archive) {
-	ArchiveInstance = ai
+func NewArchive() Archive {
+	return Archive{
+		Status:   "Running",
+		Progress: 0,
+	}
 }
 
-func RunArchive() string {
+func RunArchive(archive *Archive) string {
 	fmt.Println("Creating Archive 0%")
-	ArchiveInstance.Status = "Running"
-	time.Sleep(1 * time.Second)
-	ArchiveInstance.Progress = 20
+	time.Sleep(2 * time.Second)
+	archive.Progress = 20
 	fmt.Println("Creating Archive 20%")
-	time.Sleep(1 * time.Second)
-	ArchiveInstance.Progress = 40
+	time.Sleep(2 * time.Second)
+	archive.Progress = 40
 	fmt.Println("Creating Archive 40%")
-	time.Sleep(1 * time.Second)
-	ArchiveInstance.Progress = 60
+	time.Sleep(2 * time.Second)
+	archive.Progress = 60
 	fmt.Println("Creating Archive 60%")
-	time.Sleep(1 * time.Second)
-	ArchiveInstance.Progress = 80
+	time.Sleep(2 * time.Second)
+	archive.Progress = 80
 	fmt.Println("Creating Archive 80%")
-	time.Sleep(1 * time.Second)
-	ArchiveInstance.Progress = 100
-	ArchiveInstance.Status = "Complete"
+	time.Sleep(2 * time.Second)
+	archive.Progress = 100
+	archive.Status = "Complete"
 	fmt.Println("Creating Archive 100%")
 
-	ArchiveInstance.ArchiveFile = "/some/path.csv"
+	archive.ArchiveFile = "/some/path.csv"
 	return "Archive ready for download"
 }
 

@@ -2,6 +2,7 @@ package main
 
 import (
 	"database/sql"
+	"encoding/gob"
 	"fmt"
 	"github.com/alexedwards/scs/v2"
 	"github.com/fouched/go-contact-app/internal/config"
@@ -50,6 +51,9 @@ func run() (*sql.DB, error) {
 		log.Fatal("Cannot connect to database! Dying argh...")
 	}
 
+	// register complex type for session
+	gob.Register(handlers.Archive{})
+	// create the session
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
 	session.Cookie.Persist = true
