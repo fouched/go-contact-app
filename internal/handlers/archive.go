@@ -13,11 +13,8 @@ type Archive struct {
 	ArchiveFile string
 }
 
-func NewArchive() Archive {
-	return Archive{
-		Status:   "Running",
-		Progress: 0,
-	}
+func NewArchive(archive *Archive) {
+	ArchiveInstance = archive
 }
 
 func RunArchive(archive *Archive) string {

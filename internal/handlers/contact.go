@@ -58,19 +58,6 @@ func (m *HandlerConfig) ContactsListGet(w http.ResponseWriter, r *http.Request) 
 	intMap["cp"] = 1
 	intMap["tp"], _ = totalPages("")
 
-	// create the archive instance
-	//  TODO: prevent re-creation?
-	if ArchiveInstance == nil {
-		fmt.Println("Creating archive instance")
-		a := Archive{
-			Status:   "Waiting",
-			Progress: 0,
-		}
-		NewArchive(&a)
-	} else {
-		fmt.Println("Archive instance already exists")
-	}
-
 	templates := []string{"/contacts.list.gohtml", "/contacts.archive.ui.gohtml"}
 
 	render.MultipleTemplates(w, r, templates, &models.TemplateData{
@@ -292,12 +279,15 @@ func (m *HandlerConfig) ArchiveGet(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m *HandlerConfig) ArchivePost(w http.ResponseWriter, r *http.Request) {
-	ArchiveInstance.Progress = 0
-
-	go RunArchive()
+	archive := Archive{
+		Status:   "Running",
+		Progress: 0,
+	}
+	NewArchive(&archive)
+	go RunArchive(&archive)
 
 	a := make(map[string]interface{})
-	a["Archive"] = ArchiveInstance
+	a["Archive"] = &archive
 	render.TemplateSnippet(w, r, "/contacts.archive.ui.gohtml", &models.TemplateData{
 		Data: a,
 	})
