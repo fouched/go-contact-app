@@ -17,18 +17,19 @@ type Archive struct {
 func RunArchive(key int) string {
 	archive := ArchiveInstances[key]
 	fileName := "./archive/" + strconv.Itoa(key) + ".csv"
-	err := repo.CreateAllContactsArchive(fileName)
-	if err != nil {
-		fmt.Println("Error creating archive:" + err.Error())
-		archive.Progress = 100
-		archive.Status = "Error"
+
+	c := make(chan int)
+	go repo.CreateAllContactsArchive(fileName, c)
+	for i := range c {
+		archive.Progress = i
 		ArchiveInstances[key] = archive
-		return "Error creating archive"
 	}
 
-	archive.Progress = 100
-	archive.Status = "Complete"
-	archive.ArchiveFile = fileName
+	if archive.Progress == 100 {
+		archive.Status = "Complete"
+		archive.ArchiveFile = fileName
+	}
+
 	ArchiveInstances[key] = archive
 	fmt.Println("Creating Archive 100%")
 

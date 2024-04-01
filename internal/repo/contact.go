@@ -51,35 +51,43 @@ func SelectContactCount(q string) (int, error) {
 	return c, err
 }
 
-func CreateAllContactsArchive(fileName string) error {
-
-	stmt := "SELECT * FROM contacts c ORDER BY c.last, c.first"
-	rows, err := db.Query(stmt)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
+func CreateAllContactsArchive(fileName string, c chan int) {
 
 	csvFile, err := os.Create(fileName)
 	if err != nil {
-		return err
+		fmt.Println(err.Error())
 	}
 	defer csvFile.Close()
+	c <- 5
+	time.Sleep(250 * time.Millisecond)
 
 	csvWriter := csv.NewWriter(csvFile)
 	csvLine := []string{"ID", "First", "Last", "Phone", "Email", "Created_At", "Updated_At"}
 	_ = csvWriter.Write(csvLine)
+	c <- 10
+	time.Sleep(250 * time.Millisecond)
 
+	stmt := "SELECT * FROM contacts c ORDER BY c.last, c.first"
+	rows, err := db.Query(stmt)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	defer rows.Close()
+	c <- 30
+
+	time.Sleep(500 * time.Millisecond)
 	for rows.Next() {
 		err := rows.Scan(&csvLine[0], &csvLine[1], &csvLine[2], &csvLine[3], &csvLine[4], &csvLine[5], &csvLine[6])
 		if err != nil {
-			return err
+			fmt.Println(err.Error())
 		}
 		_ = csvWriter.Write(csvLine)
 	}
+	c <- 70
+	time.Sleep(250 * time.Millisecond)
 	csvWriter.Flush()
-
-	return nil
+	c <- 100
+	close(c)
 }
 
 func InsertContact(c models.Contact) (int, error) {

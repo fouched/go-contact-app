@@ -298,6 +298,7 @@ func (m *HandlerConfig) ArchivePost(w http.ResponseWriter, r *http.Request) {
 		Status:   "Running",
 		Progress: 0,
 	}
+
 	go helpers.RunArchive(key)
 	m.App.Session.Put(r.Context(), "archiveKey", key)
 
