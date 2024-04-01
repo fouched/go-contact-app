@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var ArchiveInstance *Archive
+var ArchiveInstances = make(map[int]Archive)
 
 type Archive struct {
 	Status      string
@@ -13,27 +13,29 @@ type Archive struct {
 	ArchiveFile string
 }
 
-func NewArchive(archive *Archive) {
-	ArchiveInstance = archive
-}
-
-func RunArchive(archive *Archive) string {
+func RunArchive(key int) string {
+	archive := ArchiveInstances[key]
 	fmt.Println("Creating Archive 0%")
 	time.Sleep(2 * time.Second)
 	archive.Progress = 20
+	ArchiveInstances[key] = archive
 	fmt.Println("Creating Archive 20%")
 	time.Sleep(2 * time.Second)
 	archive.Progress = 40
+	ArchiveInstances[key] = archive
 	fmt.Println("Creating Archive 40%")
 	time.Sleep(2 * time.Second)
 	archive.Progress = 60
+	ArchiveInstances[key] = archive
 	fmt.Println("Creating Archive 60%")
 	time.Sleep(2 * time.Second)
 	archive.Progress = 80
+	ArchiveInstances[key] = archive
 	fmt.Println("Creating Archive 80%")
 	time.Sleep(2 * time.Second)
 	archive.Progress = 100
 	archive.Status = "Complete"
+	ArchiveInstances[key] = archive
 	fmt.Println("Creating Archive 100%")
 
 	archive.ArchiveFile = "/some/path.csv"

@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"io"
 	"math"
+	"math/rand"
 	"net/http"
 	"strconv"
 )
@@ -271,23 +272,35 @@ func (m *HandlerConfig) ContactsDeleteSelected(w http.ResponseWriter, r *http.Re
 }
 
 func (m *HandlerConfig) ArchiveGet(w http.ResponseWriter, r *http.Request) {
+
+	key := m.App.Session.Get(r.Context(), "archiveKey").(int)
 	a := make(map[string]interface{})
-	a["Archive"] = ArchiveInstance
+	archive := ArchiveInstances[key]
+	a["Archive"] = archive
+	if archive.Progress == 100 {
+		delete(ArchiveInstances, key)
+	}
+
 	render.TemplateSnippet(w, r, "/contacts.archive.ui.gohtml", &models.TemplateData{
 		Data: a,
 	})
 }
 
 func (m *HandlerConfig) ArchivePost(w http.ResponseWriter, r *http.Request) {
-	archive := Archive{
+
+	// Top-level functions, such as Float64 and Int are
+	// safe for concurrent use by multiple goroutines
+	key := rand.Int()
+
+	ArchiveInstances[key] = Archive{
 		Status:   "Running",
 		Progress: 0,
 	}
-	NewArchive(&archive)
-	go RunArchive(&archive)
+	go RunArchive(key)
+	m.App.Session.Put(r.Context(), "archiveKey", key)
 
 	a := make(map[string]interface{})
-	a["Archive"] = &archive
+	a["Archive"] = ArchiveInstances[key]
 	render.TemplateSnippet(w, r, "/contacts.archive.ui.gohtml", &models.TemplateData{
 		Data: a,
 	})
