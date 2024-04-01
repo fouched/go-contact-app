@@ -7,6 +7,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/fouched/go-contact-app/internal/config"
 	"github.com/fouched/go-contact-app/internal/handlers"
+	"github.com/fouched/go-contact-app/internal/helpers"
 	"github.com/fouched/go-contact-app/internal/render"
 	"github.com/fouched/go-contact-app/internal/repo"
 	_ "github.com/jackc/pgx/v5"
@@ -52,7 +53,7 @@ func run() (*sql.DB, error) {
 	}
 
 	// register complex type for session
-	gob.Register(handlers.Archive{})
+	gob.Register(helpers.Archive{})
 	// create the session
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour

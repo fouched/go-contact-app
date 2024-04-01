@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"github.com/fouched/go-contact-app/internal/helpers"
 	"github.com/fouched/go-contact-app/internal/models"
 	"github.com/fouched/go-contact-app/internal/render"
 	"github.com/fouched/go-contact-app/internal/repo"
@@ -275,10 +276,11 @@ func (m *HandlerConfig) ArchiveGet(w http.ResponseWriter, r *http.Request) {
 
 	key := m.App.Session.Get(r.Context(), "archiveKey").(int)
 	a := make(map[string]interface{})
-	archive := ArchiveInstances[key]
+	archive := helpers.ArchiveInstances[key]
 	a["Archive"] = archive
 	if archive.Progress == 100 {
-		delete(ArchiveInstances, key)
+		delete(helpers.ArchiveInstances, key)
+		m.App.Session.Remove(r.Context(), "archiveKey")
 	}
 
 	render.TemplateSnippet(w, r, "/contacts.archive.ui.gohtml", &models.TemplateData{
@@ -292,19 +294,18 @@ func (m *HandlerConfig) ArchivePost(w http.ResponseWriter, r *http.Request) {
 	// safe for concurrent use by multiple goroutines
 	key := rand.Int()
 
-	ArchiveInstances[key] = Archive{
+	helpers.ArchiveInstances[key] = helpers.Archive{
 		Status:   "Running",
 		Progress: 0,
 	}
-	go RunArchive(key)
+	go helpers.RunArchive(key)
 	m.App.Session.Put(r.Context(), "archiveKey", key)
 
 	a := make(map[string]interface{})
-	a["Archive"] = ArchiveInstances[key]
+	a["Archive"] = helpers.ArchiveInstances[key]
 	render.TemplateSnippet(w, r, "/contacts.archive.ui.gohtml", &models.TemplateData{
 		Data: a,
 	})
-
 }
 
 // parseContactForm creates an instance of the Contact struct
