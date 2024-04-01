@@ -1,8 +1,10 @@
 package repo
 
 import (
+	"encoding/csv"
 	"fmt"
 	"github.com/fouched/go-contact-app/internal/models"
+	"os"
 	"strconv"
 	"time"
 )
@@ -47,6 +49,37 @@ func SelectContactCount(q string) (int, error) {
 	err := db.QueryRow(s).Scan(&c)
 
 	return c, err
+}
+
+func CreateAllContactsArchive(fileName string) error {
+
+	stmt := "SELECT * FROM contacts c ORDER BY c.last, c.first"
+	rows, err := db.Query(stmt)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	csvFile, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	defer csvFile.Close()
+
+	csvWriter := csv.NewWriter(csvFile)
+	csvLine := []string{"ID", "First", "Last", "Phone", "Email", "Created_At", "Updated_At"}
+	_ = csvWriter.Write(csvLine)
+
+	for rows.Next() {
+		err := rows.Scan(&csvLine[0], &csvLine[1], &csvLine[2], &csvLine[3], &csvLine[4], &csvLine[5], &csvLine[6])
+		if err != nil {
+			return err
+		}
+		_ = csvWriter.Write(csvLine)
+	}
+	csvWriter.Flush()
+
+	return nil
 }
 
 func InsertContact(c models.Contact) (int, error) {

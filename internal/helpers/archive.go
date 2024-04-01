@@ -2,7 +2,8 @@ package helpers
 
 import (
 	"fmt"
-	"time"
+	"github.com/fouched/go-contact-app/internal/repo"
+	"strconv"
 )
 
 var ArchiveInstances = make(map[int]Archive)
@@ -15,27 +16,19 @@ type Archive struct {
 
 func RunArchive(key int) string {
 	archive := ArchiveInstances[key]
-	fmt.Println("Creating Archive 0%")
-	time.Sleep(2 * time.Second)
-	archive.Progress = 20
-	ArchiveInstances[key] = archive
-	fmt.Println("Creating Archive 20%")
-	time.Sleep(2 * time.Second)
-	archive.Progress = 40
-	ArchiveInstances[key] = archive
-	fmt.Println("Creating Archive 40%")
-	time.Sleep(2 * time.Second)
-	archive.Progress = 60
-	ArchiveInstances[key] = archive
-	fmt.Println("Creating Archive 60%")
-	time.Sleep(2 * time.Second)
-	archive.Progress = 80
-	ArchiveInstances[key] = archive
-	fmt.Println("Creating Archive 80%")
-	time.Sleep(2 * time.Second)
+	fileName := "./archive/" + strconv.Itoa(key) + ".csv"
+	err := repo.CreateAllContactsArchive(fileName)
+	if err != nil {
+		fmt.Println("Error creating archive:" + err.Error())
+		archive.Progress = 100
+		archive.Status = "Error"
+		ArchiveInstances[key] = archive
+		return "Error creating archive"
+	}
+
 	archive.Progress = 100
 	archive.Status = "Complete"
-	archive.ArchiveFile = "/some/path.csv"
+	archive.ArchiveFile = fileName
 	ArchiveInstances[key] = archive
 	fmt.Println("Creating Archive 100%")
 
