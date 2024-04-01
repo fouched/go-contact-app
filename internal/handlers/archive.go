@@ -35,10 +35,10 @@ func RunArchive(key int) string {
 	time.Sleep(2 * time.Second)
 	archive.Progress = 100
 	archive.Status = "Complete"
+	archive.ArchiveFile = "/some/path.csv"
 	ArchiveInstances[key] = archive
 	fmt.Println("Creating Archive 100%")
 
-	archive.ArchiveFile = "/some/path.csv"
 	return "Archive ready for download"
 }
 
