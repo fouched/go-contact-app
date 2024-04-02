@@ -19,20 +19,28 @@ func RunArchive(key int) string {
 	fileName := "./archive/" + strconv.Itoa(key) + ".csv"
 
 	c := make(chan int)
-	go repo.CreateAllContactsArchive(fileName, c)
-	for i := range c {
-		archive.Progress = i
+	count, err := repo.SelectContactCount("")
+	if err != nil {
+		fmt.Println(err.Error())
+		archive.Progress = 100
+		archive.Status = "Error"
+		return "Error creating archive"
+	} else {
+		// we can query the db, should be fine to continue
+		go repo.CreateAllContactsArchive(fileName, count, c)
+		for i := range c {
+			archive.Progress = i
+			ArchiveInstances[key] = archive
+		}
+
+		if archive.Progress == 100 {
+			archive.Status = "Complete"
+			archive.ArchiveFile = fileName
+		}
+
 		ArchiveInstances[key] = archive
+		fmt.Println("Creating Archive 100%")
 	}
-
-	if archive.Progress == 100 {
-		archive.Status = "Complete"
-		archive.ArchiveFile = fileName
-	}
-
-	ArchiveInstances[key] = archive
-	fmt.Println("Creating Archive 100%")
-
 	return "Archive ready for download"
 }
 

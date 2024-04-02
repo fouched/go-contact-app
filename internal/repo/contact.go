@@ -51,7 +51,7 @@ func SelectContactCount(q string) (int, error) {
 	return c, err
 }
 
-func CreateAllContactsArchive(fileName string, c chan int) {
+func CreateAllContactsArchive(fileName string, count int, c chan int) {
 
 	csvFile, err := os.Create(fileName)
 	if err != nil {
@@ -73,17 +73,52 @@ func CreateAllContactsArchive(fileName string, c chan int) {
 		fmt.Println(err.Error())
 	}
 	defer rows.Close()
-	c <- 30
-
+	c <- 20
 	time.Sleep(500 * time.Millisecond)
+
+	// break the rows into progress segments on larger data sets
+	increment := 0
+	if count > 10000 {
+		increment = count / 6
+	}
+	counter := 0
+	segment := 1
 	for rows.Next() {
+		counter = counter + 1
+		if counter == increment {
+			if segment == 1 {
+				c <- 30
+				segment = segment + 1
+				increment = increment + increment
+			} else if segment == 2 {
+				c <- 40
+				segment = segment + 1
+				increment = increment + increment
+			} else if segment == 3 {
+				c <- 50
+				segment = segment + 1
+				increment = increment + increment
+			} else if segment == 5 {
+				c <- 60
+				segment = segment + 1
+				increment = increment + increment
+			} else if segment == 6 {
+				c <- 70
+				segment = segment + 1
+				increment = increment + increment
+			} else if segment == 7 {
+				c <- 80
+				segment = segment + 1
+			}
+		}
+
 		err := rows.Scan(&csvLine[0], &csvLine[1], &csvLine[2], &csvLine[3], &csvLine[4], &csvLine[5], &csvLine[6])
 		if err != nil {
 			fmt.Println(err.Error())
 		}
 		_ = csvWriter.Write(csvLine)
 	}
-	c <- 70
+	c <- 90
 	time.Sleep(250 * time.Millisecond)
 	csvWriter.Flush()
 	c <- 100
