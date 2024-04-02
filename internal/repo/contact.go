@@ -90,22 +90,27 @@ func CreateAllContactsArchive(fileName string, count int, c chan int) {
 				c <- 30
 				segment = segment + 1
 				increment = increment + increment
+				csvWriter.Flush()
 			} else if segment == 2 {
 				c <- 40
 				segment = segment + 1
 				increment = increment + increment
+				csvWriter.Flush()
 			} else if segment == 3 {
 				c <- 50
 				segment = segment + 1
 				increment = increment + increment
+				csvWriter.Flush()
 			} else if segment == 5 {
 				c <- 60
 				segment = segment + 1
 				increment = increment + increment
+				csvWriter.Flush()
 			} else if segment == 6 {
 				c <- 70
 				segment = segment + 1
 				increment = increment + increment
+				csvWriter.Flush()
 			} else if segment == 7 {
 				c <- 80
 				segment = segment + 1
