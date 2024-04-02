@@ -28,6 +28,7 @@ func RunArchive(key int) string {
 	} else {
 		// we can query the db, should be fine to continue
 		go repo.CreateAllContactsArchive(fileName, count, c)
+		// fires when the chan value changes
 		for i := range c {
 			archive.Progress = i
 			ArchiveInstances[key] = archive
