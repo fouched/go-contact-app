@@ -89,6 +89,15 @@ func (m *HandlerConfig) ContactsListPost(w http.ResponseWriter, r *http.Request)
 		cpInt = 1
 	}
 
+	// if the query changes we need to reset to page 1
+	if q != "" {
+		oq := m.App.Session.Get(r.Context(), "oq")
+		if q != oq {
+			cpInt = 1
+		}
+		m.App.Session.Put(r.Context(), "oq", q)
+	}
+
 	if first != "" {
 		cpInt = 1
 	} else if last != "" {
