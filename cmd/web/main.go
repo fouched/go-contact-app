@@ -13,6 +13,7 @@ import (
 	_ "github.com/jackc/pgx/v5"
 	_ "github.com/jackc/pgx/v5/pgconn"
 	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/jaswdr/faker/v2"
 	"log"
 	"net/http"
 	"time"
@@ -29,6 +30,8 @@ func main() {
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	//seed(dbPool)
 
 	// we have database connectivity, close it after app stops
 	defer dbPool.Close()
@@ -69,4 +72,23 @@ func run() (*sql.DB, error) {
 	render.NewRenderer(&app)
 
 	return dbPool, nil
+}
+
+func seed(db *sql.DB) {
+	fmt.Println("Seeding database")
+	fake := faker.New()
+
+	person := fake.Person()
+	phone := fake.Phone()
+	for i := 0; i < 100000; i++ {
+		firstName := person.FirstName()
+		lastName := person.LastName()
+
+		stmt := `INSERT INTO contacts (first, last, phone, email, created_at, updated_at)
+    			VALUES($1, $2, $3, $4, $5, $6)`
+
+		db.Exec(stmt, firstName, lastName, phone.E164Number(),
+			firstName+"@"+lastName+".com", time.Now(), time.Now())
+
+	}
 }
