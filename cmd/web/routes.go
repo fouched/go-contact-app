@@ -14,9 +14,8 @@ func routes() http.Handler {
 	mux.Use(SessionLoad)
 
 	mux.Get("/", handlers.Instance.Home)
-	//mux.Get("/help", handlers.Instance.H)
+	mux.Get("/help", handlers.Instance.Help)
 	mux.Get("/settings", handlers.Instance.Settings)
-	mux.Get("/settings/{q}", handlers.Instance.SettingsSearchGet)
 
 	mux.Route("/contacts", func(r chi.Router) {
 		r.Get("/", handlers.Instance.ContactsListGet)
