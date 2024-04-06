@@ -81,8 +81,8 @@ func CreateAllContactsArchive(fileName string, count int, c chan int) {
 	if count > 10000 {
 		increment = count / 6
 	}
-	counter := 0
 	nextIncrement := increment
+	counter := 0
 	progress := 30
 	for rows.Next() {
 		counter = counter + 1
