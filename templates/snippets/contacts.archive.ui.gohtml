@@ -4,7 +4,7 @@
             Download Contact Archive
         </button>
     {{ else if eq .Data.Archive.Status "Running"}}
-        <div hx-get="/contacts/archive" hx-trigger="load delay:500ms">
+        <div hx-get="/contacts/archive" hx-trigger="load delay:250ms">
             Creating archive...
             <div class="progress">
                 <div class="progress-bar" style="width: {{ .Data.Archive.Progress }}%">
@@ -12,7 +12,7 @@
             </div>
         </div>
     {{ else  if eq .Data.Archive.Status "Complete"}}
-        Archive Ready!&nbsp;<a hx-boost="false" href="/contacts/archive/file" target="_blank">Click here to download</a>
+        Archive Ready!&nbsp;<a hx-boost="false" href="/static/archive/{{.Data.Archive.ArchiveFile}}" target="_blank">Click here to download</a>
         <br>
     {{ end}}
 </div>

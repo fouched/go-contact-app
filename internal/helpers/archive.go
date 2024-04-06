@@ -16,7 +16,7 @@ type Archive struct {
 
 func RunArchive(key int) string {
 	archive := ArchiveInstances[key]
-	fileName := "./archive/" + strconv.Itoa(key) + ".csv"
+	fileName := strconv.Itoa(key) + ".csv"
 
 	c := make(chan int)
 	count, err := repo.SelectContactCount("")
@@ -40,7 +40,6 @@ func RunArchive(key int) string {
 		}
 
 		ArchiveInstances[key] = archive
-		fmt.Println("Creating Archive 100%")
 	}
 	return "Archive ready for download"
 }

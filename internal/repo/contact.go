@@ -52,8 +52,7 @@ func SelectContactCount(q string) (int, error) {
 }
 
 func CreateAllContactsArchive(fileName string, count int, c chan int) {
-
-	csvFile, err := os.Create(fileName)
+	csvFile, err := os.Create("./static/archive/" + fileName)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
