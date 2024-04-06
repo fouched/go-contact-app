@@ -74,7 +74,7 @@ func CreateAllContactsArchive(fileName string, count int, c chan int) {
 	}
 	defer rows.Close()
 	c <- 20
-	time.Sleep(500 * time.Millisecond)
+	time.Sleep(250 * time.Millisecond)
 
 	// break the rows into progress segments on larger data sets
 	increment := 0
