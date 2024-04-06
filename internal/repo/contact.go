@@ -82,39 +82,15 @@ func CreateAllContactsArchive(fileName string, count int, c chan int) {
 		increment = count / 6
 	}
 	counter := 0
-	segment := 1
+	nextIncrement := increment
+	progress := 30
 	for rows.Next() {
 		counter = counter + 1
-		if counter == increment {
-			if segment == 1 {
-				c <- 30
-				segment = segment + 1
-				increment = increment + increment
-				csvWriter.Flush()
-			} else if segment == 2 {
-				c <- 40
-				segment = segment + 1
-				increment = increment + increment
-				csvWriter.Flush()
-			} else if segment == 3 {
-				c <- 50
-				segment = segment + 1
-				increment = increment + increment
-				csvWriter.Flush()
-			} else if segment == 4 {
-				c <- 60
-				segment = segment + 1
-				increment = increment + increment
-				csvWriter.Flush()
-			} else if segment == 5 {
-				c <- 70
-				segment = segment + 1
-				increment = increment + increment
-				csvWriter.Flush()
-			} else if segment == 6 {
-				c <- 80
-				segment = segment + 1
-			}
+		if counter == nextIncrement {
+			c <- progress
+			nextIncrement = nextIncrement + increment
+			progress = progress + 10
+			csvWriter.Flush()
 		}
 
 		err := rows.Scan(&csvLine[0], &csvLine[1], &csvLine[2], &csvLine[3], &csvLine[4], &csvLine[5], &csvLine[6])
