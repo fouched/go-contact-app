@@ -19,7 +19,7 @@ import (
 	"time"
 )
 
-const port = ":8000"
+const port = ":9080"
 const dbString = "host=localhost port=5432 dbname=contact_app user=fouche password=javac"
 
 var app config.AppConfig
