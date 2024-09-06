@@ -64,6 +64,7 @@ func CreateAllContactsArchive(fileName string, count int, c chan int) {
 	csvLine := []string{"ID", "First", "Last", "Phone", "Email", "Created_At", "Updated_At"}
 	_ = csvWriter.Write(csvLine)
 	c <- 10
+	// the sleep is artificial since we have a small data set
 	time.Sleep(250 * time.Millisecond)
 
 	stmt := "SELECT * FROM contacts c ORDER BY c.last, c.first"
@@ -99,6 +100,7 @@ func CreateAllContactsArchive(fileName string, count int, c chan int) {
 		_ = csvWriter.Write(csvLine)
 	}
 	c <- 90
+	// the sleep is artificial since we have a small data set
 	time.Sleep(250 * time.Millisecond)
 	csvWriter.Flush()
 	c <- 100
